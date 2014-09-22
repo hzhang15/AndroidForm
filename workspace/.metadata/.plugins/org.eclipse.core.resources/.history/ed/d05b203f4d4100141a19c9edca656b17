@@ -1,0 +1,20 @@
+package com.foxitsample.formfiled;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
+
+public class testActivity extends Activity {
+	private SeekBar seekBar1;
+    private TextView textview1;
+    private SeekBar seekBar2;
+    private TextView textview2;
+    private SeekBar seekBar3;
+    private TextView textview3;
+    private SeekBar seekBar4;
+    private TextView textview4;
+    
+
+}
