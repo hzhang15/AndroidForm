@@ -22,7 +22,7 @@ public class WrapPDFFunc
 {
 	/** state variables*/
 	private static final String TAG = "WrapPDFFunc";
-	private static final String fileName = "/mnt/sdcard/FoxitForm.pdf";
+	private static final String fileName = "/mnt/sdcard/HS-268%20Water%20Heater%20-%20Agreement.pdf";//FoxitForm
 	private static final String password = "";
 	private int nFileRead = 0;
 	private int nPDFDocHandler = 0;
