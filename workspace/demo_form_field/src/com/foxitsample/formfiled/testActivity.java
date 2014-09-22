@@ -1,7 +1,10 @@
 package com.foxitsample.formfiled;
 
+import com.foxitsample.pdfLib.PDFDocument;
+
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -19,8 +22,13 @@ public class testActivity extends Activity {
     private TextView textview3;
     private SeekBar seekBar4;
     private TextView textview4;
+    private SeekBar seekBar5;
+    private TextView textview5;
+    private SeekBar seekBar6;
+    private TextView textview6;
     private ImageView testimage;
     private Button mainbutton;
+    private static final String fileName = "/mnt/sdcard/HS-268%20Water%20Heater%20-%20Agreement.pdf";
     
     protected void onCreate(Bundle savedInstanceState) {    	         
     	super.onCreate(savedInstanceState);
@@ -29,16 +37,22 @@ public class testActivity extends Activity {
     	seekBar2=(SeekBar)findViewById(R.id.seekBar2);
     	seekBar3=(SeekBar)findViewById(R.id.seekBar3);
     	seekBar4=(SeekBar)findViewById(R.id.seekBar4);
+    	seekBar5=(SeekBar)findViewById(R.id.seekBar5);
+    	seekBar6=(SeekBar)findViewById(R.id.seekBar6);
     	textview1=(TextView)findViewById(R.id.textview1);
     	textview2=(TextView)findViewById(R.id.textview2);
     	textview3=(TextView)findViewById(R.id.textview3);
-    	textview4=(TextView)findViewById(R.id.textview4); 
+    	textview4=(TextView)findViewById(R.id.textview4);
+    	textview5=(TextView)findViewById(R.id.textview5);
+    	textview6=(TextView)findViewById(R.id.textview6);
     	testimage=(ImageView)findViewById(R.id.testimage); 
     	mainbutton=(Button)findViewById(R.id.mainbutton);
     	textview1.setText(seekBar1.getProgress() + "/" + seekBar1.getMax());
     	textview2.setText(seekBar1.getProgress() + "/" + seekBar2.getMax());
     	textview3.setText(seekBar1.getProgress() + "/" + seekBar3.getMax());
     	textview4.setText(seekBar1.getProgress() + "/" + seekBar4.getMax());
+    	textview5.setText(seekBar1.getProgress() + "/" + seekBar5.getMax());
+    	textview6.setText(seekBar1.getProgress() + "/" + seekBar6.getMax());
     	seekBar1.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
     		int progress = 0;
     		@Override
@@ -107,11 +121,54 @@ public class testActivity extends Activity {
     			textview4.setText(progress + "/" + seekBar.getMax()); 		
     		};
     	});
+    	seekBar5.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+    		int progress = 0;
+    		@Override
+    		public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) 
+    		{
+    			progress = progresValue;
+    		}
+    		public void onStartTrackingTouch(SeekBar seekBar)
+    		{
+    			
+    		}
+    		@Override
+    		public void onStopTrackingTouch(SeekBar seekBar) 
+    		{
+    			textview5.setText(progress + "/" + seekBar.getMax()); 		
+    		};
+    	});
+    	seekBar6.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+    		int progress = 0;
+    		@Override
+    		public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) 
+    		{
+    			progress = progresValue;
+    		}
+    		public void onStartTrackingTouch(SeekBar seekBar)
+    		{
+    			
+    		}
+    		@Override
+    		public void onStopTrackingTouch(SeekBar seekBar) 
+    		{
+    			textview6.setText(progress + "/" + seekBar.getMax()); 		
+    		};
+    	});
     	mainbutton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent1 = new Intent(getApplicationContext(),mainActivity.class);
-			    startActivity(intent1);			
+				//Intent intent1 = new Intent(getApplicationContext(),mainActivity.class);
+			    //startActivity(intent1);
+				
+				PDFDocument doc = new PDFDocument(fileName);
+				RectF rectF = new RectF();
+				rectF.left = seekBar1.getProgress();
+				rectF.top = seekBar2.getProgress();
+				rectF.right = seekBar1.getProgress() + seekBar3.getProgress();
+				rectF.bottom = seekBar2.getProgress() + seekBar4.getProgress();
+				testimage.setImageBitmap(doc.generateImage(0, seekBar5.getProgress(), seekBar6.getProgress(), rectF));
+				
 			}
 		});
 
