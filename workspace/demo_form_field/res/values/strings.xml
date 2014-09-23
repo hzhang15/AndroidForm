@@ -11,7 +11,8 @@
 	<string name="height">Height:</string>
 	<string name="form_page">Form_Page</string>
 	<string name="description">Test_View</string>
-	<string name="imageWidth">Image Width:</string>
-	<string name="imageHeight">Image Height:</string>
+	<string name="imageWidth">Page Width:</string>
+	<string name="imageHeight">Page Height:</string>
+	<string name="scale">Scale:</string>
 	
 </resources>

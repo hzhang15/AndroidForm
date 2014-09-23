@@ -11,6 +11,7 @@ import android.graphics.Rect;
 
 import com.foxitsample.exception.*;
 import com.foxitsample.formfiled.mainActivity;
+import com.foxitsample.formfiled.testActivity;
 
 /**
  * defined for a wrap for All PDF implements¡£
@@ -40,6 +41,7 @@ public class WrapPDFFunc
 	public WrapPDFFunc(mainActivity context){
 		mainView = context;
 	}
+	
 	
 	/** Init EMB SDK*/
 	public boolean InitFoxitFixedMemory() throws parameterException, invalidLicenseException{

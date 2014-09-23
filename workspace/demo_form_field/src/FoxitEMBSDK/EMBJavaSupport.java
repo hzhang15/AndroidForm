@@ -31,7 +31,9 @@ public class EMBJavaSupport {
 	public static native void FPDFPageClose(int page) throws parameterException;
 	public static native int FPDFPageStartParse(int page, int text_only, int pauseHandler) throws toBeContinuedException, parameterException, statusException, memoryException;
 	public static native int FPDFPageContinueParse(int page, int pauseHandler) throws toBeContinuedException, parameterException, statusException, memoryException;
-
+    
+	public static native float FPDFPageGetSizeX(int pageHandle) throws parameterException;
+	public static native float FPDFPageGetSizeY(int pageHandle) throws parameterException;
 	
 	public class Rectangle
 	{
@@ -113,10 +115,13 @@ public class EMBJavaSupport {
 		private mainActivity mainView = null;
 		private Timer time = null;
 		
-		public CPDFFormFillerInfo(mainActivity view){
+	   public CPDFFormFillerInfo(mainActivity view){
 			mainView = view;
 		}
 		
+		
+
+
 		public void Release(){
 			
 		}

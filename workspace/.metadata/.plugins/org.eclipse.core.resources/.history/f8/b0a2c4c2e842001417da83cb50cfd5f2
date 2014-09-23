@@ -1,0 +1,142 @@
+package com.foxitsample.pdfLib;
+
+import java.nio.ByteBuffer;
+
+import com.foxitsample.exception.invalidLicenseException;
+import com.foxitsample.exception.parameterException;
+import com.foxitsample.formfiled.testActivity;
+
+import FoxitEMBSDK.EMBJavaSupport;
+import FoxitEMBSDK.EMBJavaSupport.CPDFFormFillerInfo;
+import FoxitEMBSDK.EMBJavaSupport.CPDFJsPlatform;
+import android.graphics.Bitmap;
+import android.graphics.Rect;
+import com.foxitsample.formfiled.PDFView;
+
+public class PDFDocument {
+	public PDFView pdfview;
+	private int nPDFFormHandler = 0;
+	public String fileName = "/mnt/sdcard/HS-268%20Water%20Heater%20-%20Agreement.pdf";
+	private static final String password = "";
+	private int nFileRead = 0;
+	private int nPDFDocHandler = 0;
+	private int nPDFCurPageHandler = 0;
+	public PDFDocument(String filePath)
+	{
+		this.fileName=filePath;
+	}
+	
+	public void generateImage(int pageIndex, int pageWidth, int pageHeight, Rect viewRect)
+	{	
+		boolean nRet=false;
+		try {
+			nRet = this.InitFoxitFixedMemory();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+  		if (nRet != true){
+  			return;
+  		}
+  		nRet = this.InitPDFDoc();
+  		if (nRet != true){
+  			return;
+  		}
+  		
+ 		int nPageCount = this.GetPageCounts();
+  		
+  		nRet = this.InitPDFPage(0);
+  		if (nRet != true){
+  			return;
+  		}
+  		pdfview.setPDFBitmap(this.getPageBitmap(viewRect.width(), viewRect.height()), viewRect.width(), viewRect.height());
+  		pdfview.OnDraw();
+		
+  		
+	}
+	public boolean InitFoxitFixedMemory() throws parameterException, invalidLicenseException{
+		EMBJavaSupport.FSMemInitFixedMemory(5*1024*1024);		
+		EMBJavaSupport.FSInitLibrary(0);
+		EMBJavaSupport.FSUnlock("SDKEDTEMP", "019BF43365F8BF984D694D44332D9223EC4C95B7");			
+		return true;
+	}
+    public boolean InitPDFDoc(){
+		try {
+			nFileRead = EMBJavaSupport.FSFileReadAlloc(fileName);
+			nPDFDocHandler = EMBJavaSupport.FPDFDocLoad(nFileRead, password);
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+				
+		return true;
+	}
+    
+public boolean InitPDFPage(int nPageIndex){
+		
+		if (nPDFDocHandler == 0){
+			return false;
+		}
+		
+		try {
+			nPDFCurPageHandler = EMBJavaSupport.FPDFPageLoad(nPDFDocHandler, nPageIndex);
+		} catch (parameterException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}	
+		try {
+			EMBJavaSupport.FPDFPageStartParse(nPDFCurPageHandler, 0, 0);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		
+		return true;
+	}
+    
+  public int GetPageCounts(){
+		
+		if (nPDFDocHandler == 0){
+			return EMBJavaSupport.EMBJavaSupport_RESULT_ERROR;
+		}
+		
+		int nPageCount=-1;
+		try {
+			nPageCount = EMBJavaSupport.FPDFDocGetPageCount(nPDFDocHandler);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		return nPageCount;
+	}
+  public Bitmap getPageBitmap(int displayWidth, int displayHeight){
+		if(nPDFCurPageHandler == 0) {
+			return null;
+		} 
+								
+		Bitmap bm;
+		bm = Bitmap.createBitmap(displayWidth,displayHeight,Bitmap.Config.ARGB_8888);
+		
+		int dib;
+		try {
+			dib = EMBJavaSupport.FSBitmapCreate(displayWidth, displayHeight, 7, null, 0);
+	
+		EMBJavaSupport.FSBitmapFillColor(dib,0xff);
+		EMBJavaSupport.FPDFRenderPageStart(dib, nPDFCurPageHandler, 0, 0, displayWidth, displayHeight, 0, 0, null, 0);
+
+		///
+		
+		byte[] bmpbuf=EMBJavaSupport.FSBitmapGetBuffer(dib);
+		
+		ByteBuffer bmBuffer = ByteBuffer.wrap(bmpbuf); 
+		bm.copyPixelsFromBuffer(bmBuffer);
+		
+		EMBJavaSupport.FSBitmapDestroy(dib);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return bm;
+	}
+}

@@ -1,0 +1,47 @@
+package com.foxitsample.pdfLib;
+
+import com.foxitsample.formfiled.testActivity;
+import com.foxitsample.service.WrapPDFFunc;
+import android.graphics.Bitmap;
+import android.graphics.Rect;
+import com.foxitsample.formfiled.PDFView;
+
+public class PDFDocument {
+	
+	public String filePath;
+	public testActivity test;
+	public PDFDocument(String filePath)
+	{
+		this.filePath=filePath;
+	}
+	
+	public void generateImage(int pageIndex, float pageWidth, float pageHeight, Rect viewRect)
+	{
+		WrapPDFFunc func1= new WrapPDFFunc(test);
+		func1.fileName=filePath;
+		PDFView pdfview=new PDFView(test);
+		boolean nRet=false;
+		try {
+			nRet = func1.InitFoxitFixedMemory();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+  		if (nRet != true){
+  			return;
+  		}
+  		nRet = func1.InitPDFDoc();
+  		if (nRet != true){
+  			return;
+  		}
+  		
+ 		int nPageCount = func1.GetPageCounts();
+ 		nRet = func1.InitPDFPage(0);
+  		if (nRet != true){
+  			return;
+  		}
+  		pdfview.setPDFBitmap(func1.getDirtyBitmap(viewRect, viewRect.width(), viewRect.height()), viewRect.width(), viewRect.height());
+  		pdfview.OnDraw();
+  		
+	}
+}
