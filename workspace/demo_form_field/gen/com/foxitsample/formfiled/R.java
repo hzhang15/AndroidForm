@@ -14,19 +14,21 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int editText=0x7f05000c;
-        public static final int mainbutton=0x7f05000b;
+        public static final int editText=0x7f05000e;
+        public static final int mainbutton=0x7f05000d;
         public static final int seekBar1=0x7f050001;
         public static final int seekBar2=0x7f050003;
         public static final int seekBar3=0x7f050005;
         public static final int seekBar4=0x7f050007;
         public static final int seekBar7=0x7f050009;
-        public static final int testimage=0x7f05000a;
+        public static final int seekBar8=0x7f05000b;
+        public static final int testimage=0x7f05000c;
         public static final int textview1=0x7f050000;
         public static final int textview2=0x7f050002;
         public static final int textview3=0x7f050004;
         public static final int textview4=0x7f050006;
         public static final int textview7=0x7f050008;
+        public static final int textview8=0x7f05000a;
     }
     public static final class layout {
         public static final int main=0x7f030000;
@@ -42,10 +44,11 @@ public final class R {
         public static final int hint=0x7f040003;
         public static final int imageHeight=0x7f04000b;
         public static final int imageWidth=0x7f04000a;
-        public static final int scale=0x7f04000c;
         public static final int test_name=0x7f040001;
         public static final int width=0x7f040006;
         public static final int x_value=0x7f040004;
+        public static final int xscale=0x7f04000c;
         public static final int y_value=0x7f040005;
+        public static final int yscale=0x7f04000d;
     }
 }

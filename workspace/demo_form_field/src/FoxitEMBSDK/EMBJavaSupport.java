@@ -5,6 +5,7 @@ import java.util.TimerTask;
 
 import com.foxitsample.exception.*;
 import com.foxitsample.formfiled.mainActivity;
+import com.foxitsample.formfiled.testActivity;
 
 
 public class EMBJavaSupport {
@@ -112,12 +113,18 @@ public class EMBJavaSupport {
 		
 		public int nCallBackAddr = 0;
 		public int nTimeElapse = 0;
-		private mainActivity mainView = null;
+		private mainActivity mainView1 = null;
+		private testActivity mainView = null;
 		private Timer time = null;
 		
 	   public CPDFFormFillerInfo(mainActivity view){
+			mainView1 = view;
+		}
+	   
+	   public CPDFFormFillerInfo(testActivity view){
 			mainView = view;
 		}
+		
 		
 		
 
@@ -128,7 +135,7 @@ public class EMBJavaSupport {
 		
 		public void FFI_Invalidate(int page, float left, float top, float right, float bottom){
 			if (mainView != null){
-				int nCurPage = mainView.func.getCurPDFPageHandler();
+				int nCurPage = mainView.doc.getCurPDFPageHandler();
 				if (nCurPage != page) return;
 			//	mainView.displayPDFView();
 				mainView.invalidate(left, bottom, right, top);
@@ -170,7 +177,7 @@ public class EMBJavaSupport {
 		
 		public int FFI_GetPage(int document, int page_index){
 			if (mainView != null){
-				int nPageHandler = mainView.func.getPageHandler(page_index);
+				int nPageHandler = mainView.doc.getPageHandler(page_index);
 				return nPageHandler;
 			}
 			return 0;
@@ -178,7 +185,7 @@ public class EMBJavaSupport {
 		
 		public int FFI_GetCurrentPage(int document){
 			if (mainView != null){
-				return mainView.func.getCurPDFPageHandler();
+				return mainView.doc.getCurPDFPageHandler();
 			}
 			return 0;
 		}
@@ -242,6 +249,7 @@ public class EMBJavaSupport {
 	public static native void FPDFDocExitFormFillEnviroument(int nFormHandler);
 	
 	public static native void FPDFFormFillOnAfterLoadPage(int nFormHandler, int page);
+	//public static native void FPDFFormFillOnBeforeClosePage(int nFormHandler, int page);
 	public static native void FPDFFormFillDraw(int nFormHandler, int dib, int page, int startx, int starty, 
 										int sizex, int sizey, int rotate, int flags);
 	

@@ -4,4 +4,8 @@
 <fullyQualifiedTypeName name="android.widget.Button"/>
 <fullyQualifiedTypeName name="android.view.View.OnClickListener"/>
 <fullyQualifiedTypeName name="android.content.Intent"/>
+<fullyQualifiedTypeName name="android.graphics.Rect"/>
+<fullyQualifiedTypeName name="com.foxitsample.formfiled.testActivity"/>
+<fullyQualifiedTypeName name="com.foxitsample.formfiled.PDFView"/>
+<fullyQualifiedTypeName name="android.view.View.OnTouchListener"/>
 </qualifiedTypeNameHistroy>

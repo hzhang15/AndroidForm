@@ -7,12 +7,13 @@
 	<string name="hint">Please enter the text!</string>
 	<string name="x_value">X_value:</string>
 	<string name="y_value">Y_value:</string>
-	<string name="width">Width:</string>
-	<string name="height">Height:</string>
-	<string name="form_page">Form_Page</string>
+	<string name="width">ImageWidth:</string>
+	<string name="height">ImageHeight:</string>
+	<string name="form_page">Generator</string>
 	<string name="description">Test_View</string>
 	<string name="imageWidth">Page Width:</string>
 	<string name="imageHeight">Page Height:</string>
-	<string name="scale">Scale:</string>
+	<string name="xscale">PageWidth_Scale:</string>
+	<string name="yscale">PageHeight_Scale:</string>
 	
 </resources>
