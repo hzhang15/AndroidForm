@@ -8,6 +8,7 @@ import FoxitEMBSDK.EMBJavaSupport.PointF;
 import FoxitEMBSDK.EMBJavaSupport.RectangleF;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Bundle;
@@ -29,16 +30,19 @@ public class testActivity extends Activity {
     private TextView textview3;
     private SeekBar seekBar4;
     private TextView textview4;
-    private SeekBar seekBar5;
-    private TextView textview5;
-    private SeekBar seekBar6;
-    private TextView textview6;
     private SeekBar seekBar7;
     private TextView textview7;
     private SeekBar seekBar8;
     private TextView textview8;
     private ImageView testimage;
     private Button mainbutton;
+    private Button leftButton;
+    private Button rightButton;
+    private Button upButton;
+    private Button downButton;
+    private Button hitButton;
+    private Bitmap screenImage;
+    DrawingButtonInitializer initializer;
     private static final String fileName = "/mnt/sdcard/HS-268%20Water%20Heater%20-%20Agreement.pdf";
     //private static final String fileName ="/mnt/sdcard/FoxitForm.pdf";
     public PDFDocument doc=null;
@@ -64,6 +68,10 @@ public class testActivity extends Activity {
     	textview8=(TextView)findViewById(R.id.textview8);
     	testimage=(ImageView)findViewById(R.id.testimage); 
     	mainbutton=(Button)findViewById(R.id.mainbutton);
+    	leftButton=(Button)findViewById(R.id.leftButton);
+    	rightButton=(Button)findViewById(R.id.rightButton);
+    	upButton=(Button)findViewById(R.id.upButton);
+    	downButton=(Button)findViewById(R.id.downButton);
     	textview1.setText(seekBar1.getProgress() + "/" + seekBar1.getMax());
     	textview2.setText(seekBar1.getProgress() + "/" + seekBar2.getMax());
     	textview3.setText(seekBar1.getProgress() + "/" + seekBar3.getMax());
@@ -206,33 +214,7 @@ public class testActivity extends Activity {
   		if (nRet != true){
   			return;
   		}
-    	
-    	mainbutton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				//Intent intent1 = new Intent(getApplicationContext(),mainActivity.class);
-			    //startActivity(intent1);
-					
-				Rect rect = new Rect();
-				rect.left = seekBar1.getProgress();
-				rect.top = seekBar2.getProgress();
-				rect.right = seekBar1.getProgress() + seekBar3.getProgress();
-				rect.bottom = seekBar2.getProgress() + seekBar4.getProgress();
-				int pwscale=seekBar7.getProgress();
-				int phscale=seekBar8.getProgress();
-				/*if (doc.nPDFCurPageHandler!=0)
-				{
-					doc.ClosePDFPage();	
-				}
-				if (doc.nPDFDocHandler != 0)
-				{   
-					doc.ClosePDFDoc();
-				    doc.DestroyFoxitFixedMemory();	    
-				}*/
-				testimage.setImageBitmap(doc.generateImage(0,pwscale,phscale,rect));
-				
-			}
-		});
+ 
     	testimage.setOnTouchListener(new View.OnTouchListener() {
 			
 			@Override
@@ -267,7 +249,10 @@ public class testActivity extends Activity {
 				return true;
 			}
 		});
-    }
+    	
+    	initializer = DrawingButtonInitializer.generateInitializer(this);
+    	
+}
         public void createAndroidTextField(String text){
 			
 			Intent intent = new Intent();
@@ -331,6 +316,55 @@ public class testActivity extends Activity {
 				EMBJavaSupport.FPDFFormFillOnSetText(doc.getPDFFormHandler(), doc.getCurPDFPageHandler(), text, 0);
 			}
 			super.onActivityResult(requestCode, resultCode, data);
+		}
+        
+		public Bitmap getScreenImage() {
+			return screenImage;
+		}
+		public Button getLeftButton() {
+			return leftButton;
+		}
+		public Button getRightButton() {
+			return rightButton;
+		}
+		public Button getUpButton() {
+			return upButton;
+		}
+		public Button getDownButton() {
+			return downButton;
+		}
+		public Button getHitButton() {
+			return hitButton;
+		}
+		public ImageView getTestimage() {
+			return testimage;
+		}
+		public Button getMainbutton() {
+			return mainbutton;
+		}
+		public SeekBar getSeekBar1() {
+			return seekBar1;
+		}
+		public SeekBar getSeekBar2() {
+			return seekBar2;
+		}
+		public SeekBar getSeekBar3() {
+			return seekBar3;
+		}
+		public SeekBar getSeekBar4() {
+			return seekBar4;
+		}
+		public SeekBar getSeekBar7() {
+			return seekBar7;
+		}
+		public SeekBar getSeekBar8() {
+			return seekBar8;
+		}
+		public void setScreenImage(Bitmap screenImage) {
+			this.screenImage = screenImage;
+		}
+		public PDFDocument getDoc() {
+			return doc;
 		}
 
 

@@ -15,5 +15,10 @@
 	<string name="imageHeight">Page Height:</string>
 	<string name="xscale">PageWidth_Scale:</string>
 	<string name="yscale">PageHeight_Scale:</string>
-	
+	<string name="left">&lt;--</string>
+	<string name="right">--&gt;</string>
+	<string name="up">^</string>
+	<string name="down">V</string>
+	<string name="hit">HIT</string>
+	<string name="Coordinates">0.0,0.0</string>
 </resources>
