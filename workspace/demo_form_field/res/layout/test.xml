@@ -213,7 +213,8 @@
 
      <LinearLayout
          android:layout_width="match_parent"
-         android:layout_height="wrap_content" >
+         android:layout_height="wrap_content"
+           >
 
          <Button
              android:id="@+id/leftButton"
@@ -227,6 +228,7 @@
              style="?android:attr/buttonStyleSmall"
              android:layout_width="50dp"
              android:layout_height="50dp"
+             android:layout_marginLeft="25dp"
              android:text="@string/up" />
 
          <Button
@@ -234,6 +236,7 @@
              style="?android:attr/buttonStyleSmall"
              android:layout_width="50dp"
              android:layout_height="50dp"
+             android:layout_marginLeft="25dp"
              android:text="@string/down" />
 
          <Button
@@ -241,6 +244,7 @@
              style="?android:attr/buttonStyleSmall"
              android:layout_width="50dp"
              android:layout_height="50dp"
+             android:layout_marginLeft="25dp"
              android:text="@string/right" />
 
          <Button
@@ -248,6 +252,7 @@
              style="?android:attr/buttonStyleSmall"
              android:layout_width="50dp"
              android:layout_height="50dp"
+             android:layout_marginLeft="25dp"
              android:text="@string/hit" />
      </LinearLayout>
 
