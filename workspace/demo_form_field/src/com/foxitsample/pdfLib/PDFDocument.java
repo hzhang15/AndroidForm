@@ -4,9 +4,9 @@ import java.nio.ByteBuffer;
 
 import com.foxitsample.exception.invalidLicenseException;
 import com.foxitsample.exception.parameterException;
-import com.foxitsample.formfiled.mainActivity;
 import com.foxitsample.formfiled.testActivity;
 
+import FoxitEMBSDK.EMBCallbackUpdateDelegate;
 import FoxitEMBSDK.EMBJavaSupport;
 import FoxitEMBSDK.EMBJavaSupport.CPDFFormFillerInfo;
 import FoxitEMBSDK.EMBJavaSupport.CPDFJsPlatform;
@@ -21,17 +21,17 @@ public class PDFDocument {
 	public int nPDFCurPageHandler = 0;
 	
 	/** form*/
-	private testActivity mainView = null;
+	private EMBCallbackUpdateDelegate delegate = null;
 	private CPDFFormFillerInfo formFillerInfo = null;
 	public int nPDFFormFillerInfo = 0;
 	public CPDFJsPlatform jsPlatform = null;
 	public int nPDFJsPlatform = 0;
     public int nPDFFormHandler = 0;
 	
-	public PDFDocument(String filePath, testActivity context)
+	public PDFDocument(String filePath, EMBCallbackUpdateDelegate delegate)
 	{
 		this.fileName=filePath;
-		mainView=context;
+		this.delegate=delegate;
 	}
 	
 	public Bitmap generateImage(int pageIndex, int pwscale,int phscale, Rect viewRect)
@@ -97,9 +97,9 @@ public class PDFDocument {
 		EMBJavaSupport.FSUnlock("SDKEDFZ1560", "759C262EECD8CD6828F31AB1D6637B806A1C82F6");
 		
 /////////formfiller implemention
-		if (mainView == null) 
+		if (delegate == null) 
 			return false;
-		formFillerInfo = new EMBJavaSupport().new CPDFFormFillerInfo(mainView);
+		formFillerInfo = new EMBJavaSupport().new CPDFFormFillerInfo(delegate);
 		if (formFillerInfo == null)
 			return false;
 		nPDFFormFillerInfo = EMBJavaSupport.FPDFFormFillerInfoAlloc(formFillerInfo);

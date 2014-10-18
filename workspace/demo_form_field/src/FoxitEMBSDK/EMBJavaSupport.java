@@ -4,7 +4,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.foxitsample.exception.*;
-import com.foxitsample.formfiled.mainActivity;
 import com.foxitsample.formfiled.testActivity;
 
 
@@ -113,16 +112,17 @@ public class EMBJavaSupport {
 		
 		public int nCallBackAddr = 0;
 		public int nTimeElapse = 0;
-		private mainActivity mainView1 = null;
-		private testActivity mainView = null;
+		private EMBCallbackUpdateDelegate delegate = null;
+		//private testActivity mainView = null;
 		private Timer time = null;
 		
-	   public CPDFFormFillerInfo(mainActivity view){
-			mainView1 = view;
-		}
+//	   public CPDFFormFillerInfo(mainActivity view){
+//			mainView1 = view;
+//		}
 	   
-	   public CPDFFormFillerInfo(testActivity view){
-			mainView = view;
+	   public CPDFFormFillerInfo(EMBCallbackUpdateDelegate delegate){
+			//mainView = view;
+			this.delegate = delegate;
 		}
 		
 		
@@ -134,12 +134,16 @@ public class EMBJavaSupport {
 		}
 		
 		public void FFI_Invalidate(int page, float left, float top, float right, float bottom){
-			if (mainView != null){
-				int nCurPage = mainView.doc.getCurPDFPageHandler();
-				if (nCurPage != page) return;
-			//	mainView.displayPDFView();
-				mainView.invalidate(left, bottom, right, top);
-			}
+//			if (mainView != null){
+//				int nCurPage = mainView.doc.getCurPDFPageHandler();
+//				if (nCurPage != page) return;
+//			//	mainView.displayPDFView();
+//				mainView.invalidate(left, bottom, right, top);
+//			}
+			
+			assert(delegate != null);
+			delegate.refresh(page, left, top, right, bottom);
+			
 		}
 		
 		public void FFI_OutputSelectedRect(int page, double left, double top, double right, double bottom){
@@ -176,18 +180,26 @@ public class EMBJavaSupport {
 		}
 		
 		public int FFI_GetPage(int document, int page_index){
-			if (mainView != null){
-				int nPageHandler = mainView.doc.getPageHandler(page_index);
-				return nPageHandler;
-			}
-			return 0;
+//			if (mainView != null){
+//				int nPageHandler = mainView.doc.getPageHandler(page_index);
+//				return nPageHandler;
+//			}
+//			return 0;
+			
+			
+			assert(delegate != null);
+			return delegate.getPageHandlerFromIndex(document, page_index);
+			
 		}
 		
 		public int FFI_GetCurrentPage(int document){
-			if (mainView != null){
-				return mainView.doc.getCurPDFPageHandler();
-			}
-			return 0;
+//			if (mainView != null){
+//				return mainView.doc.getCurPDFPageHandler();
+//			}
+//			return 0;
+			
+			assert(delegate != null);
+			return delegate.getCurrentPageHandler(document);
 		}
 		
 		public int FFI_GetRotation(int page){
@@ -199,7 +211,9 @@ public class EMBJavaSupport {
 		}
 		
 		public void FFI_OnSetFieldInputFocus(int field, String focustext, int nTextLen){
-			mainView.createAndroidTextField(focustext);
+			//mainView.createAndroidTextField(focustext);
+			assert(delegate != null);
+			delegate.bringUpTextField(field, focustext, nTextLen);
 		}
 	}
 	

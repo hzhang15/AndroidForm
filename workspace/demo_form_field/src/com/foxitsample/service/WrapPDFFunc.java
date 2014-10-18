@@ -3,6 +3,7 @@
 
 import java.nio.ByteBuffer;
 
+import FoxitEMBSDK.EMBCallbackUpdateDelegate;
 import FoxitEMBSDK.EMBJavaSupport;
 import FoxitEMBSDK.EMBJavaSupport.CPDFFormFillerInfo;
 import FoxitEMBSDK.EMBJavaSupport.CPDFJsPlatform;
@@ -10,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.Rect;
 
 import com.foxitsample.exception.*;
-import com.foxitsample.formfiled.mainActivity;
 import com.foxitsample.formfiled.testActivity;
 
 /**
@@ -30,7 +30,8 @@ public class WrapPDFFunc
 	private int nPDFCurPageHandler = 0;
 	
 	/** form*/
-	private mainActivity mainView = null;
+	//private mainActivity mainView = null;
+	private EMBCallbackUpdateDelegate delegate;
 	private CPDFFormFillerInfo formFillerInfo = null;
 	private int nPDFFormFillerInfo = 0;
 	private CPDFJsPlatform jsPlatform = null;
@@ -38,8 +39,8 @@ public class WrapPDFFunc
 	private int nPDFFormHandler = 0;
 		
 	/** */
-	public WrapPDFFunc(mainActivity context){
-		mainView = context;
+	public WrapPDFFunc(EMBCallbackUpdateDelegate delegate){
+		this.delegate = delegate;
 	}
 	
 	
@@ -52,9 +53,10 @@ public class WrapPDFFunc
 
 		
 		/////////formfiller implemention
-		if (mainView == null) 
-			return false;
-		formFillerInfo = new EMBJavaSupport().new CPDFFormFillerInfo(mainView);
+//		if (mainView == null) 
+//			return false;
+		assert(delegate != null);
+		formFillerInfo = new EMBJavaSupport().new CPDFFormFillerInfo(delegate);
 		if (formFillerInfo == null)
 			return false;
 		nPDFFormFillerInfo = EMBJavaSupport.FPDFFormFillerInfoAlloc(formFillerInfo);

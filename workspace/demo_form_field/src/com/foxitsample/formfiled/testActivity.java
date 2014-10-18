@@ -22,18 +22,18 @@ import android.widget.TextView;
 
 
 public class testActivity extends Activity {
-	private SeekBar seekBar1;
-    private TextView textview1;
-    private SeekBar seekBar2;
-    private TextView textview2;
-    private SeekBar seekBar3;
-    private TextView textview3;
-    private SeekBar seekBar4;
-    private TextView textview4;
-    private SeekBar seekBar7;
-    private TextView textview7;
-    private SeekBar seekBar8;
-    private TextView textview8;
+	private SeekBar seekBarStartX;
+    private TextView textviewStartX;
+    private SeekBar seekBarStartY;
+    private TextView textviewStartY;
+    private SeekBar seekBarImageWidth;
+    private TextView textviewImageWidth;
+    private SeekBar seekBarImageHeight;
+    private TextView textviewImageHeight;
+    private SeekBar seekBarScaleX;
+    private TextView textviewScaleX;
+    private SeekBar seekBarScaleY;
+    private TextView textviewScaleY;
     private ImageView testimage;
     private Button mainbutton;
     private Button leftButton;
@@ -43,7 +43,7 @@ public class testActivity extends Activity {
     private Button hitButton;
     private Bitmap screenImage;
     private TextView coordinatesTextView;
-    DrawingButtonInitializer initializer;
+    InteractionLogic interactionLogic;
     private static final String fileName = "/mnt/sdcard/HS-268%20Water%20Heater%20-%20Agreement.pdf";
     //private static final String fileName ="/mnt/sdcard/FoxitForm.pdf";
     public PDFDocument doc=null;
@@ -51,22 +51,22 @@ public class testActivity extends Activity {
     	super.onCreate(savedInstanceState);
     	setContentView(R.layout.test);
 		
-    	seekBar1=(SeekBar)findViewById(R.id.seekBar1);
-    	seekBar2=(SeekBar)findViewById(R.id.seekBar2);
-    	seekBar3=(SeekBar)findViewById(R.id.seekBar3);
-    	seekBar4=(SeekBar)findViewById(R.id.seekBar4);
+    	seekBarStartX=(SeekBar)findViewById(R.id.seekBar1);
+    	seekBarStartY=(SeekBar)findViewById(R.id.seekBar2);
+    	seekBarImageWidth=(SeekBar)findViewById(R.id.seekBar3);
+    	seekBarImageHeight=(SeekBar)findViewById(R.id.seekBar4);
     	//seekBar5=(SeekBar)findViewById(R.id.seekBar5);
     	//seekBar6=(SeekBar)findViewById(R.id.seekBar6);
-    	seekBar7=(SeekBar)findViewById(R.id.seekBar7);
-    	seekBar8=(SeekBar)findViewById(R.id.seekBar8);
-    	textview1=(TextView)findViewById(R.id.textview1);
-    	textview2=(TextView)findViewById(R.id.textview2);
-    	textview3=(TextView)findViewById(R.id.textview3);
-    	textview4=(TextView)findViewById(R.id.textview4);
+    	seekBarScaleX=(SeekBar)findViewById(R.id.seekBar7);
+    	seekBarScaleY=(SeekBar)findViewById(R.id.seekBar8);
+    	textviewStartX=(TextView)findViewById(R.id.textview1);
+    	textviewStartY=(TextView)findViewById(R.id.textview2);
+    	textviewImageWidth=(TextView)findViewById(R.id.textview3);
+    	textviewImageHeight=(TextView)findViewById(R.id.textview4);
     	//textview5=(TextView)findViewById(R.id.textview5);
     	//textview6=(TextView)findViewById(R.id.textview6);
-    	textview7=(TextView)findViewById(R.id.textview7);
-    	textview8=(TextView)findViewById(R.id.textview8);
+    	textviewScaleX=(TextView)findViewById(R.id.textview7);
+    	textviewScaleY=(TextView)findViewById(R.id.textview8);
     	testimage=(ImageView)findViewById(R.id.testimage); 
     	mainbutton=(Button)findViewById(R.id.mainbutton);
     	leftButton=(Button)findViewById(R.id.leftButton);
@@ -75,23 +75,26 @@ public class testActivity extends Activity {
     	downButton=(Button)findViewById(R.id.downButton);
     	hitButton = (Button)findViewById(R.id.hitButton);
     	coordinatesTextView=(TextView)findViewById(R.id.coordinatesView);
-    	textview1.setText(seekBar1.getProgress() + "/" + seekBar1.getMax());
-    	textview2.setText(seekBar1.getProgress() + "/" + seekBar2.getMax());
-    	textview3.setText(seekBar1.getProgress() + "/" + seekBar3.getMax());
-    	textview4.setText(seekBar1.getProgress() + "/" + seekBar4.getMax());
+    	textviewStartX.setText(seekBarStartX.getProgress() + "/" + seekBarStartX.getMax());
+    	textviewStartY.setText(seekBarStartX.getProgress() + "/" + seekBarStartY.getMax());
+    	textviewImageWidth.setText(seekBarStartX.getProgress() + "/" + seekBarImageWidth.getMax());
+    	textviewImageHeight.setText(seekBarStartX.getProgress() + "/" + seekBarImageHeight.getMax());
     	//textview5.setText(seekBar1.getProgress() + "/" + seekBar5.getMax());
     	//textview6.setText(seekBar1.getProgress() + "/" + seekBar6.getMax());
-    	textview7.setText(seekBar1.getProgress() + "/" + seekBar7.getMax());
-    	textview8.setText(seekBar1.getProgress() + "/" + seekBar8.getMax());
-    	doc = new PDFDocument(fileName,this);
+    	textviewScaleX.setText(seekBarStartX.getProgress() + "/" + seekBarScaleX.getMax());
+    	textviewScaleY.setText(seekBarStartX.getProgress() + "/" + seekBarScaleY.getMax());
+    	
+    	interactionLogic = InteractionLogic.generateLogic(this);
+    	doc = new PDFDocument(fileName, interactionLogic);
     	testimage.setFocusable(true);
     	testimage.setFocusableInTouchMode(true);
-    	seekBar1.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+    	seekBarStartX.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
     		int progress = 0;
     		@Override
     		public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) 
     		{
     			progress = progresValue;
+    			
     		}
     		public void onStartTrackingTouch(SeekBar seekBar)
     		{
@@ -100,10 +103,10 @@ public class testActivity extends Activity {
     		@Override
     		public void onStopTrackingTouch(SeekBar seekBar) 
     		{
-    			textview1.setText(progress + "/" + seekBar.getMax()); 		
+    			textviewStartX.setText(progress + "/" + seekBar.getMax()); 		
     		};
     	});
-    	seekBar2.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+    	seekBarStartY.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
     		int progress = 0;
     		@Override
     		public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) 
@@ -117,10 +120,10 @@ public class testActivity extends Activity {
     		@Override
     		public void onStopTrackingTouch(SeekBar seekBar) 
     		{
-    			textview2.setText(progress + "/" + seekBar.getMax()); 		
+    			textviewStartY.setText(progress + "/" + seekBar.getMax()); 		
     		};
     	});
-    	seekBar3.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+    	seekBarImageWidth.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
     		int progress = 0;
     		@Override
     		public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) 
@@ -134,10 +137,10 @@ public class testActivity extends Activity {
     		@Override
     		public void onStopTrackingTouch(SeekBar seekBar) 
     		{
-    			textview3.setText(progress + "/" + seekBar.getMax()); 		
+    			textviewImageWidth.setText(progress + "/" + seekBar.getMax()); 		
     		};
     	});
-    	seekBar4.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+    	seekBarImageHeight.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
     		int progress = 0;
     		@Override
     		public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) 
@@ -151,10 +154,10 @@ public class testActivity extends Activity {
     		@Override
     		public void onStopTrackingTouch(SeekBar seekBar) 
     		{
-    			textview4.setText(progress + "/" + seekBar.getMax()); 		
+    			textviewImageHeight.setText(progress + "/" + seekBar.getMax()); 		
     		};
     	});
-    	seekBar7.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+    	seekBarScaleX.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
     		int progress = 0;
     		@Override
     		public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) 
@@ -168,10 +171,10 @@ public class testActivity extends Activity {
     		@Override
     		public void onStopTrackingTouch(SeekBar seekBar) 
     		{
-    			textview7.setText(progress + "/" + seekBar.getMax()); 		
+    			textviewScaleX.setText(progress + "/" + seekBar.getMax()); 		
     		};
     	});
-    	seekBar8.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+    	seekBarScaleY.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
     		int progress = 0;
     		@Override
     		public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) 
@@ -185,7 +188,7 @@ public class testActivity extends Activity {
     		@Override
     		public void onStopTrackingTouch(SeekBar seekBar) 
     		{
-    			textview8.setText(progress + "/" + seekBar.getMax()); 		
+    			textviewScaleY.setText(progress + "/" + seekBar.getMax()); 		
     		};
     	});
     	
@@ -253,7 +256,7 @@ public class testActivity extends Activity {
 //			}
 //		});
     	
-    	initializer = DrawingButtonInitializer.generateInitializer(this);
+    	
     	
 }
         public void createAndroidTextField(String text){
@@ -265,68 +268,11 @@ public class testActivity extends Activity {
 			intent.putExtra("key", bundle);
 			this.startActivityForResult(intent, 0);			
 		}
-        public void invalidate(float left, float top, float right, float bottom){
-        	int l, t, r, b;
-			RectangleF rect = new EMBJavaSupport().new RectangleF();
-			rect.left = left;
-			rect.top = top;
-			rect.right = right;
-			rect.bottom = bottom;
-			int startx=-seekBar1.getProgress();
-			int starty=-seekBar2.getProgress();
-			int size_x= (int)doc.GetPageSizeX(doc.getCurPDFPageHandler())*seekBar7.getProgress();
-			int size_y= (int)doc.GetPageSizeY(doc.getCurPDFPageHandler())*seekBar8.getProgress();
-			EMBJavaSupport.FPDFPagePageToDeviceRectF(doc.getCurPDFPageHandler(), startx, starty,size_x , size_y, 0, rect);
-			l = (int)rect.left;
-			//t = (int)rect.bottom;
-			r = (int)rect.right;
-			//b = (int)rect.top;
-			b = (int)rect.bottom;
-			t = (int)rect.top;	
-			/*
-			Canvas tempcanvas=new Canvas(dirtybm);
-			tempcanvas.drawBitmap(dirtybm,0,0,null);
-			testimage.setImageDrawable(new BitmapDrawable(getResources(), dirtybm));
-			*/
-			//surfaceview.setDirtyRect(l, t, r, b);
-			//surfaceview.setDirtyBitmap(doc.getDirtyBitmap(rc, seekBar3.getProgress(),seekBar4.getProgress()));
-			//surfaceview.OnDraw();
-			if(l>seekBar3.getProgress()||r<0)
-			{
-				return;
-			}
-			if(t>seekBar4.getProgress()||b<0)
-			{
-				return;
-			}
-			if(r>seekBar3.getProgress())
-			{
-				r=seekBar3.getProgress();
-			}
-			if(b>seekBar4.getProgress())
-			{
-				b=seekBar4.getProgress();
-			}
-			if(l<0)
-			{
-				l=0;
-			}
-			if(t<0)
-			{
-				t=0;
-			}
-			Rect rc = new Rect(l,t,r,b);
-			Bitmap dirtybm=doc.getDirtyBitmap(seekBar1.getProgress(),seekBar2.getProgress(),rc,seekBar7.getProgress(), seekBar8.getProgress());
-			int width=dirtybm.getWidth();
-			int height=dirtybm.getHeight();
-			int[] dirtypixels=new int[width*height];
-			dirtybm.getPixels(dirtypixels, 0, width, 0, 0, width, height);
-			screenImage.setPixels(dirtypixels, 0, width, l, t, width, height);
-			
-			
-			
-			
-		}
+//        public void invalidate(float left, float top, float right, float bottom){
+//        	
+//			interactionLogic.updateScreenImageInPDFCoordinates(left, top, right, bottom);
+//			
+//		}
         
         protected void onDestroy() {
         	// TODO Auto-generated method stub
@@ -360,7 +306,7 @@ public class testActivity extends Activity {
 			super.onActivityResult(requestCode, resultCode, data);
 			EMBJavaSupport.FPDFFormFillOnKillFocus(doc.getCurPDFPageHandler());
 			//testimage.setImageBitmap(screenImage);
-			initializer.refresh();
+			interactionLogic.refresh();
 		}
         
 		public Bitmap getScreenImage() {
@@ -388,22 +334,22 @@ public class testActivity extends Activity {
 			return mainbutton;
 		}
 		public SeekBar getSeekBar1() {
-			return seekBar1;
+			return seekBarStartX;
 		}
 		public SeekBar getSeekBar2() {
-			return seekBar2;
+			return seekBarStartY;
 		}
 		public SeekBar getSeekBar3() {
-			return seekBar3;
+			return seekBarImageWidth;
 		}
 		public SeekBar getSeekBar4() {
-			return seekBar4;
+			return seekBarImageHeight;
 		}
 		public SeekBar getSeekBar7() {
-			return seekBar7;
+			return seekBarScaleX;
 		}
 		public SeekBar getSeekBar8() {
-			return seekBar8;
+			return seekBarScaleY;
 		}
 		public void setScreenImage(Bitmap screenImage) {
 			this.screenImage = screenImage;
