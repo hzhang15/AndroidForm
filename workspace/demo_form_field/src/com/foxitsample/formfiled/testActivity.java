@@ -9,16 +9,13 @@ import FoxitEMBSDK.EMBJavaSupport.RectangleF;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -39,12 +36,17 @@ public class testActivity extends Activity {
     private TextView textview8;
     private ImageView testimage;
     private Button mainbutton;
-    private Bitmap imagebm;
-    //private LinearLayout layout1;
+    private Button leftButton;
+    private Button rightButton;
+    private Button upButton;
+    private Button downButton;
+    private Button hitButton;
+    private Bitmap screenImage;
+    private TextView coordinatesTextView;
+    DrawingButtonInitializer initializer;
     private static final String fileName = "/mnt/sdcard/HS-268%20Water%20Heater%20-%20Agreement.pdf";
     //private static final String fileName ="/mnt/sdcard/FoxitForm.pdf";
     public PDFDocument doc=null;
-    //public PDFView surfaceview=null;
     public void onCreate(Bundle savedInstanceState) {    	         
     	super.onCreate(savedInstanceState);
     	setContentView(R.layout.test);
@@ -53,30 +55,37 @@ public class testActivity extends Activity {
     	seekBar2=(SeekBar)findViewById(R.id.seekBar2);
     	seekBar3=(SeekBar)findViewById(R.id.seekBar3);
     	seekBar4=(SeekBar)findViewById(R.id.seekBar4);
+    	//seekBar5=(SeekBar)findViewById(R.id.seekBar5);
+    	//seekBar6=(SeekBar)findViewById(R.id.seekBar6);
     	seekBar7=(SeekBar)findViewById(R.id.seekBar7);
     	seekBar8=(SeekBar)findViewById(R.id.seekBar8);
     	textview1=(TextView)findViewById(R.id.textview1);
     	textview2=(TextView)findViewById(R.id.textview2);
     	textview3=(TextView)findViewById(R.id.textview3);
     	textview4=(TextView)findViewById(R.id.textview4);
+    	//textview5=(TextView)findViewById(R.id.textview5);
+    	//textview6=(TextView)findViewById(R.id.textview6);
     	textview7=(TextView)findViewById(R.id.textview7);
     	textview8=(TextView)findViewById(R.id.textview8);
     	testimage=(ImageView)findViewById(R.id.testimage); 
     	mainbutton=(Button)findViewById(R.id.mainbutton);
-    	//layout1=(LinearLayout)findViewById(R.id.layout1);
+    	leftButton=(Button)findViewById(R.id.leftButton);
+    	rightButton=(Button)findViewById(R.id.rightButton);
+    	upButton=(Button)findViewById(R.id.upButton);
+    	downButton=(Button)findViewById(R.id.downButton);
+    	hitButton = (Button)findViewById(R.id.hitButton);
+    	coordinatesTextView=(TextView)findViewById(R.id.coordinatesView);
     	textview1.setText(seekBar1.getProgress() + "/" + seekBar1.getMax());
     	textview2.setText(seekBar1.getProgress() + "/" + seekBar2.getMax());
     	textview3.setText(seekBar1.getProgress() + "/" + seekBar3.getMax());
     	textview4.setText(seekBar1.getProgress() + "/" + seekBar4.getMax());
+    	//textview5.setText(seekBar1.getProgress() + "/" + seekBar5.getMax());
+    	//textview6.setText(seekBar1.getProgress() + "/" + seekBar6.getMax());
     	textview7.setText(seekBar1.getProgress() + "/" + seekBar7.getMax());
     	textview8.setText(seekBar1.getProgress() + "/" + seekBar8.getMax());
     	doc = new PDFDocument(fileName,this);
     	testimage.setFocusable(true);
     	testimage.setFocusableInTouchMode(true);
-    	//surfaceview=new PDFView(this);
-    	//layout1.addView(surfaceview);
-    	
-    	
     	seekBar1.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
     		int progress = 0;
     		@Override
@@ -208,114 +217,45 @@ public class testActivity extends Activity {
   		if (nRet != true){
   			return;
   		}
-  		//Rect rect1=new Rect(100,100,200,200);
-    	//surfaceview.setPDFBitmap(doc.generateImage(0,1,1,rect1),100,100);
-  		//surfaceview.OnDraw();	
+ 
+//    	testimage.setOnTouchListener(new View.OnTouchListener() {
+//			
+//			@Override
+//			public boolean onTouch(View v, MotionEvent event) {
+//				// TODO Auto-generated method stub
+//				int actionType=event.getAction()&MotionEvent.ACTION_MASK;
+//				int actionId=event.getAction()&MotionEvent.ACTION_POINTER_ID_MASK;
+//				actionId=actionId>>8;  
+//				
+//				PointF point = new EMBJavaSupport().new PointF();
+//				point.x = event.getX();
+//				point.y = event.getY();	
+//				int startx=-seekBar1.getProgress();
+//				int starty=-seekBar2.getProgress();
+//				int size_x= (int)doc.GetPageSizeX(doc.getCurPDFPageHandler())*seekBar7.getProgress();
+//				int size_y= (int)doc.GetPageSizeY(doc.getCurPDFPageHandler())*seekBar8.getProgress();
+//				EMBJavaSupport.FPDFPageDeviceToPagePointF(doc.getCurPDFPageHandler(), startx,starty,size_x , size_y, 0, point);
+//				//point.x=point.x*seekBar7.getProgress();
+//				//point.y=point.y*seekBar8.getProgress();
+//				switch(actionType){
+//				case MotionEvent.ACTION_MOVE://
+//					EMBJavaSupport.FPDFFormFillOnMouseMove(doc.getPDFFormHandler(), doc.getCurPDFPageHandler(), 0, point.x, point.y);
+//					break;
+//				case MotionEvent.ACTION_DOWN:	//	
+//					EMBJavaSupport.FPDFFormFillOnMouseMove(doc.getPDFFormHandler(), doc.getCurPDFPageHandler(), 0, point.x, point.y);
+//					EMBJavaSupport.FPDFFormFillOnLButtonDown(doc.getPDFFormHandler(), doc.getCurPDFPageHandler(), 0, point.x, point.y);
+//					break;
+//				case MotionEvent.ACTION_UP:	//
+//					EMBJavaSupport.FPDFFormFillOnLButtonUp(doc.getPDFFormHandler(), doc.getCurPDFPageHandler(), 0, point.x, point.y);
+//					break;
+//				}
+//				return true;
+//			}
+//		});
     	
-    	mainbutton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				//Intent intent1 = new Intent(getApplicationContext(),mainActivity.class);
-			    //startActivity(intent1);
-					
-				Rect rect = new Rect();
-				rect.left = seekBar1.getProgress();
-				rect.top = seekBar2.getProgress();
-				rect.right = seekBar1.getProgress() + seekBar3.getProgress();
-				rect.bottom = seekBar2.getProgress() + seekBar4.getProgress();
-				int pwscale=seekBar7.getProgress();
-				int phscale=seekBar8.getProgress();
-				/*if (doc.nPDFCurPageHandler!=0)
-				{
-					doc.ClosePDFPage();	
-				}
-				if (doc.nPDFDocHandler != 0)
-				{   
-					doc.ClosePDFDoc();
-				    doc.DestroyFoxitFixedMemory();	    
-				}*/
-				imagebm=null;
-				imagebm=doc.generateImage(0,pwscale,phscale,rect);
-				testimage.setImageBitmap(imagebm);
-				//surfaceview.destroyDrawingCache();
-				//surfaceview.setPDFBitmap(doc.generateImage(0,pwscale,phscale,rect),seekBar3.getProgress(),seekBar4.getProgress());
-	      		//surfaceview.OnDraw();			
-			}
-		});
+    	initializer = DrawingButtonInitializer.generateInitializer(this);
     	
-    	
-    	testimage.setOnTouchListener(new View.OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
-				int actionType=event.getAction()&MotionEvent.ACTION_MASK;
-				int actionId=event.getAction()&MotionEvent.ACTION_POINTER_ID_MASK;
-				actionId=actionId>>8;  
-				
-				PointF point = new EMBJavaSupport().new PointF();
-				point.x = event.getX();
-				point.y = event.getY();	
-				int startx=-seekBar1.getProgress();
-				int starty=-seekBar2.getProgress();
-				int size_x= (int)doc.GetPageSizeX(doc.getCurPDFPageHandler())*seekBar7.getProgress();
-				int size_y= (int)doc.GetPageSizeY(doc.getCurPDFPageHandler())*seekBar8.getProgress();
-				EMBJavaSupport.FPDFPageDeviceToPagePointF(doc.getCurPDFPageHandler(), startx,starty,size_x , size_y, 0, point);
-				//point.x=point.x*seekBar7.getProgress();
-				//point.y=point.y*seekBar8.getProgress();
-				switch(actionType){
-				case MotionEvent.ACTION_MOVE://
-					EMBJavaSupport.FPDFFormFillOnMouseMove(doc.getPDFFormHandler(), doc.getCurPDFPageHandler(), 0, point.x, point.y);
-					break;
-				case MotionEvent.ACTION_DOWN:	//	
-					EMBJavaSupport.FPDFFormFillOnMouseMove(doc.getPDFFormHandler(), doc.getCurPDFPageHandler(), 0, point.x, point.y);
-					EMBJavaSupport.FPDFFormFillOnLButtonDown(doc.getPDFFormHandler(), doc.getCurPDFPageHandler(), 0, point.x, point.y);
-					break;
-				case MotionEvent.ACTION_UP:	//
-					EMBJavaSupport.FPDFFormFillOnLButtonUp(doc.getPDFFormHandler(), doc.getCurPDFPageHandler(), 0, point.x, point.y);
-					break;
-				}
-				return true;
-			}
-		});
-		/*
-    	surfaceview.setOnTouchListener(new View.OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
-				int actionType=event.getAction()&MotionEvent.ACTION_MASK;
-				int actionId=event.getAction()&MotionEvent.ACTION_POINTER_ID_MASK;
-				actionId=actionId>>8;  
-				
-				PointF point = new EMBJavaSupport().new PointF();
-				point.x = event.getX();
-				point.y = event.getY();	
-				int startx=-seekBar1.getProgress();
-				int starty=-seekBar2.getProgress();
-				int size_x= (int)doc.GetPageSizeX(doc.getCurPDFPageHandler())*seekBar7.getProgress();
-				int size_y= (int)doc.GetPageSizeY(doc.getCurPDFPageHandler())*seekBar8.getProgress();
-				EMBJavaSupport.FPDFPageDeviceToPagePointF(doc.getCurPDFPageHandler(), startx,starty,size_x , size_y, 0, point);
-				//point.x=point.x*seekBar7.getProgress();
-				//point.y=point.y*seekBar8.getProgress();
-				switch(actionType){
-				case MotionEvent.ACTION_MOVE://
-					EMBJavaSupport.FPDFFormFillOnMouseMove(doc.getPDFFormHandler(), doc.getCurPDFPageHandler(), 0, point.x, point.y);
-					break;
-				case MotionEvent.ACTION_DOWN:	//	
-					EMBJavaSupport.FPDFFormFillOnMouseMove(doc.getPDFFormHandler(), doc.getCurPDFPageHandler(), 0, point.x, point.y);
-					EMBJavaSupport.FPDFFormFillOnLButtonDown(doc.getPDFFormHandler(), doc.getCurPDFPageHandler(), 0, point.x, point.y);
-					break;
-				case MotionEvent.ACTION_UP:	//
-					EMBJavaSupport.FPDFFormFillOnLButtonUp(doc.getPDFFormHandler(), doc.getCurPDFPageHandler(), 0, point.x, point.y);
-					break;
-				}
-				return true;
-			}
-		});
-		*/
-    }
-    
+}
         public void createAndroidTextField(String text){
 			
 			Intent intent = new Intent();
@@ -326,7 +266,7 @@ public class testActivity extends Activity {
 			this.startActivityForResult(intent, 0);			
 		}
         public void invalidate(float left, float top, float right, float bottom){
-			int l, t, r, b;
+        	int l, t, r, b;
 			RectangleF rect = new EMBJavaSupport().new RectangleF();
 			rect.left = left;
 			rect.top = top;
@@ -381,7 +321,10 @@ public class testActivity extends Activity {
 			int height=dirtybm.getHeight();
 			int[] dirtypixels=new int[width*height];
 			dirtybm.getPixels(dirtypixels, 0, width, 0, 0, width, height);
-			imagebm.setPixels(dirtypixels, 0, width, l, t, width, height);
+			screenImage.setPixels(dirtypixels, 0, width, l, t, width, height);
+			
+			
+			
 			
 		}
         
@@ -415,7 +358,61 @@ public class testActivity extends Activity {
 				EMBJavaSupport.FPDFFormFillOnSetText(doc.getPDFFormHandler(), doc.getCurPDFPageHandler(), text, 0);
 			}
 			super.onActivityResult(requestCode, resultCode, data);
-			testimage.setImageBitmap(imagebm);
+			EMBJavaSupport.FPDFFormFillOnKillFocus(doc.getCurPDFPageHandler());
+			//testimage.setImageBitmap(screenImage);
+			initializer.refresh();
+		}
+        
+		public Bitmap getScreenImage() {
+			return screenImage;
+		}
+		public Button getLeftButton() {
+			return leftButton;
+		}
+		public Button getRightButton() {
+			return rightButton;
+		}
+		public Button getUpButton() {
+			return upButton;
+		}
+		public Button getDownButton() {
+			return downButton;
+		}
+		public Button getHitButton() {
+			return hitButton;
+		}
+		public ImageView getTestimage() {
+			return testimage;
+		}
+		public Button getMainbutton() {
+			return mainbutton;
+		}
+		public SeekBar getSeekBar1() {
+			return seekBar1;
+		}
+		public SeekBar getSeekBar2() {
+			return seekBar2;
+		}
+		public SeekBar getSeekBar3() {
+			return seekBar3;
+		}
+		public SeekBar getSeekBar4() {
+			return seekBar4;
+		}
+		public SeekBar getSeekBar7() {
+			return seekBar7;
+		}
+		public SeekBar getSeekBar8() {
+			return seekBar8;
+		}
+		public void setScreenImage(Bitmap screenImage) {
+			this.screenImage = screenImage;
+		}
+		public PDFDocument getDoc() {
+			return doc;
+		}
+		public TextView getCoordinatesTextView() {
+			return coordinatesTextView;
 		}
 
 
