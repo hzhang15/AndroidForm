@@ -47,7 +47,8 @@ public class WrapPDFFunc
 	public boolean InitFoxitFixedMemory() throws parameterException, invalidLicenseException{
 		EMBJavaSupport.FSMemInitFixedMemory(5*1024*1024);		
 		EMBJavaSupport.FSInitLibrary(0);
-		EMBJavaSupport.FSUnlock("SDKEDTEMP", "019BF43365F8BF984D694D44332D9223EC4C95B7");
+		//EMBJavaSupport.FSUnlock("SDKEDTEMP", "019BF43365F8BF984D694D44332D9223EC4C95B7");
+		EMBJavaSupport.FSUnlock("SDKEDFZ1560", "759C262EECD8CD6828F31AB1D6637B806A1C82F6");
 
 		
 		/////////formfiller implemention

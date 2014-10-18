@@ -302,6 +302,7 @@ public:
 	
 	static void KillTimer(FS_LPVOID pThis, FS_INT32 nTimerID)
 	{
+	return;
 		jclass clss = m_pEnv->GetObjectClass(m_objFormFillerInfo);
 		jmethodID methodID = m_pEnv->GetMethodID(clss, "FFI_KillTimer", "(I)V");
 		if (methodID == NULL)
@@ -322,7 +323,7 @@ public:
 		if (methodID == NULL)
 			return;
 		
-		jchar* text = (jchar*)malloc(nTextLen+1);
+		jchar* text = (jchar*)malloc(sizeof(jchar)*(nTextLen+1));
 		int i;
 		for (i=0; i<nTextLen; i++)
 			text[i] = focusText[i];
@@ -347,6 +348,7 @@ public:
 
 	static FS_INT32 SetTimer(FS_LPVOID pThis, FS_INT32 uElapse, FS_LPFTimerCallback lpTimerFunc)
 	{
+	return 0;
 		jclass clss = m_pEnv->GetObjectClass(m_objFormFillerInfo);
 		jmethodID methodID = m_pEnv->GetMethodID(clss, "FFI_SetTimer", "(II)I");
 		if (methodID == NULL)
@@ -1190,7 +1192,7 @@ JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FSFileReadAlloc
 	FS_RESULT nRet = FS_Memory_Alloc(sizeof(FS_FILEREAD),(FS_LPVOID*)&pFileRead);
 	if(nRet)
 		throwException(pEnv,cls,nRet,"FSFileReadAlloc: out of memory");
-	
+	if(!pFileRead)throwException(pEnv,cls,nRet,"NULL Pointer");
 	pFileRead->GetSize = FileGetSize;
 	pFileRead->ReadBlock = FileReadBlock;
 
@@ -1223,7 +1225,7 @@ JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FSPauseHandlerAlloc
 	FS_RESULT nRet = FS_Memory_Alloc(sizeof(FS_PAUSE),(FS_LPVOID*)&pPause);
 	if(nRet)
 		throwException(pEnv,cls,nRet,"FSPauseHandlerAlloc: out of memory");
-
+	if(!pPause)throwException(pEnv,cls,nRet,"NULL Pointer");
 	pPause->NeedPauseNow = NeedToPauseNow;
 	pPause->clientData = NULL;
 
@@ -1274,7 +1276,7 @@ JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPDFFormFillerInfoAlloc
 	FS_RESULT nRet = FS_Memory_Alloc(sizeof(FPDF_FORMFILL_INFO),(FS_LPVOID*)&pFormFillerInfo);
 	if (nRet)
 		throwException(pEnv,cls,nRet,"FPDFFormFillerInfoAlloc: out of memory");
-
+	if(!pFormFillerInfo)throwException(pEnv,cls,nRet,"NULL Pointer");
 	pFormFillerInfo->clientData = NULL;
 	//pFormFillerInfo->version = 1;
 	pFormFillerInfo->Release = CPDF_FormFillerInfo::Release;
@@ -1319,7 +1321,7 @@ JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPDFJsPlatformAlloc
 	FS_RESULT nRet = FS_Memory_Alloc(sizeof(FPDF_FORMFILL_JSPLATFORM),(FS_LPVOID*)&pJsPlatform);
 	if (nRet)
 		throwException(pEnv,cls,nRet,"FPDFJsPlatformAlloc: out of memory");
-
+	if(!pJsPlatform)throwException(pEnv,cls,nRet,"NULL Pointer");
 	//pJsPlatform->version = 1;
 	pJsPlatform->clientData = NULL;
 	pJsPlatform->Alert = CPDF_JsPlatform::alert;
@@ -1554,12 +1556,14 @@ JNIEXPORT jboolean JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPDFFormFillOnSetText
 	FS_LPCWSTR pText = NULL;
 	int nLen = pTempEnv->GetStringLength(text);   
 	FS_RESULT nRet = FS_Memory_Alloc(sizeof(const unsigned short)*nLen,(FS_LPVOID*)&pText);
+	
 	if (nRet)
 		throwException(pEnv,cls,nRet,"FPDFFormFillOnSetText: out of memory");
 
 	memset((void*)pText, '\0', sizeof(const unsigned short)*nLen);
-	memcpy((void*)pText, pTempEnv->GetStringChars(text, NULL), nLen*sizeof(const unsigned short));
-	pTempEnv->ReleaseStringChars(text, pText);
+	jchar* pChars = (jchar*)pTempEnv->GetStringChars(text, NULL);
+	memcpy((void*)pText, pChars, nLen*sizeof(const unsigned short));
+	pTempEnv->ReleaseStringChars(text, pChars);
 	FS_BOOL bRet = FPDF_FormFill_OnSetText(formHandler, pPage, pText, nLen, evenflag);
 	return (jboolean)bRet;
 }
@@ -1595,14 +1599,15 @@ JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPDFNoteInfoAlloc
 	FS_RESULT nRet = FS_Memory_Alloc(sizeof(FPDF_ANNOT_NOTEINFO),(FS_LPVOID*)&pNoteInfo);
 	if (nRet)
 		throwException(pEnv,clss,nRet,"FPDFNoteInfoAlloc: note info out of memory");
-
+	if(!pNoteInfo)throwException(pEnv,clss,nRet,"Null Pointer");//1017
 	pNoteInfo->size = sizeof(FPDF_ANNOT_NOTEINFO);
 
 	int nLen = pEnv->GetStringLength(author);
 	if (nLen > 63) return (jint)NULL;
-	memset(pNoteInfo->author, '\0', 64);
-	memcpy(pNoteInfo->author, pEnv->GetStringChars(author, NULL), nLen*sizeof(FS_WCHAR));
-	pEnv->ReleaseStringChars(author, pNoteInfo->author);
+	jchar* pAuthor = (jchar*)pEnv->GetStringChars(author, NULL);
+	memset(pNoteInfo->author, '\0', sizeof(FS_WCHAR)*64);
+	memcpy(pNoteInfo->author, pAuthor, nLen*sizeof(FS_WCHAR));
+	pEnv->ReleaseStringChars(author,pAuthor);
 
 	pNoteInfo->color = color;
 	pNoteInfo->opacity =opacity;
@@ -1613,14 +1618,16 @@ JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPDFNoteInfoAlloc
 	nRet = FS_Memory_Alloc(sizeof(FS_WCHAR)*(nLen+1),(FS_LPVOID*)(&(pNoteInfo->contents)));
 	if (nRet)
 		throwException(pEnv,clss,nRet,"FPDFNoteInfoAlloc: note info content out of memory");
-
-	if (!pNoteInfo->contents)return (jint)NULL;
+	if(!pNoteInfo->contents) throwException(pEnv,clss,nRet,"Null Pointer");//1017
+	
+	jchar* pContents = (jchar*)pEnv->GetStringChars(content, NULL);
+	
 	memset((void*)pNoteInfo->contents, '\0', (nLen+1)*sizeof(FS_WCHAR));
 
-	memcpy((void*)pNoteInfo->contents, pEnv->GetStringChars(content, NULL), nLen*sizeof(FS_WCHAR));
+	memcpy((void*)pNoteInfo->contents, pContents, nLen*sizeof(FS_WCHAR));
 	
 
-	pEnv->ReleaseStringChars(content, pNoteInfo->contents);
+	pEnv->ReleaseStringChars(content, pContents);
 
 	if (!rect) return (jint)NULL;
 	FS_RECTF pdfRect;
@@ -1659,13 +1666,15 @@ JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPDFPencilInfoAlloc
 	FS_RESULT nRet = FS_Memory_Alloc(sizeof(FPDF_ANNOT_PENCILINFO),(FS_LPVOID*)&pPencilInfo);
 	if (nRet)
 		throwException(pEnv,cls,nRet,"FPDFPencilInfoAlloc: out of memory");
-
+	if(!pPencilInfo)throwException(pEnv,cls,nRet,"Null Pointer");//1017
 	pPencilInfo->size = sizeof(FPDF_ANNOT_PENCILINFO);
 	int nLen = pEnv->GetStringLength(author);
 	if (nLen > 63) return (jint)NULL;
-	memset(pPencilInfo->author, '\0', 64);
-	memcpy(pPencilInfo->author, pEnv->GetStringChars(author, NULL), nLen*sizeof(FS_WCHAR));
-	pEnv->ReleaseStringChars(author, pPencilInfo->author);
+
+	jchar* pAuthor = (jchar*)pEnv->GetStringChars(author, NULL);
+	memset(pPencilInfo->author, '\0', 64*sizeof(FS_WCHAR));
+	memcpy(pPencilInfo->author, pAuthor, nLen*sizeof(FS_WCHAR));
+	pEnv->ReleaseStringChars(author, pAuthor);
 
 	pPencilInfo->color = color;
 	pPencilInfo->opacity = opacity;
@@ -1716,7 +1725,8 @@ JNIEXPORT void JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPDFLineInfoSetPointInfo
 	FS_RESULT nRet = FS_Memory_Alloc(sizeof(FS_POINTF)*nPointCounts,(FS_LPVOID*)&pPointArr);
 	if (nRet)
 		throwException(pEnv,cls,nRet,"FPDFLineInfoSetPointInfo: out of memory");
-
+	if(!pPointArr)
+		throwException(pEnv,cls,nRet,"FPDFLineInfoSetPointInfo: pPointArr -- NULL poniter");//1017
 	int i;
 	for (i=0; i<nPointCounts; i++)
 	{
@@ -1746,6 +1756,8 @@ JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPDFHighlightInfoAlloc
 	FS_RESULT nRet = FS_Memory_Alloc(sizeof(FPDF_ANNOT_HIGHLIGHTINFO),(FS_LPVOID*)&pHighlightInfo);
 	if (nRet)
 		throwException(pEnv,cls,nRet,"FPDFHighlightInfoAlloc: out of memory");
+	if(!pHighlightInfo)
+		throwException(pEnv,cls,nRet,"FPDFHighlightInfoAlloc: pHighlightInfo -- NULL poniter");//1017
 
 	pHighlightInfo->size = sizeof(FPDF_ANNOT_HIGHLIGHTINFO);
 	pHighlightInfo->color = color;
@@ -1754,9 +1766,11 @@ JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPDFHighlightInfoAlloc
 
 	int nLen = pEnv->GetStringLength(author);
 	if (nLen > 63) return (jint)NULL;
-	memset(pHighlightInfo->author, '\0', 64);
-	memcpy(pHighlightInfo->author, pEnv->GetStringChars(author, NULL), nLen*sizeof(FS_WCHAR));
-	pEnv->ReleaseStringChars(author, pHighlightInfo->author);
+
+	jchar* pAuthor = (jchar*)pEnv->GetStringChars(author, NULL);
+	memset(pHighlightInfo->author, '\0', 64*sizeof(FS_WCHAR));
+	memcpy(pHighlightInfo->author, pAuthor, nLen*sizeof(FS_WCHAR));
+	pEnv->ReleaseStringChars(author, pAuthor);
 
 	return (jint)pHighlightInfo;
 }
@@ -1791,7 +1805,7 @@ JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPDFQuadsInfoAlloc
 	FS_RESULT nRet = FS_Memory_Alloc(sizeof(FPDF_ANNOT_QUAD)*quad_count,(FS_LPVOID*)&pQuadsInfo);
 	if (nRet)
 		throwException(pEnv,cls,nRet,"FPDFQuadsInfoAlloc: out of memory");
-
+	if(!pQuadsInfo)throwException(pEnv,cls,nRet,"FPDFQuadsInfoAlloc: out of memory");
 	float *pQuads = (float*)pEnv->GetFloatArrayElements(quads, FALSE);
 	int i;
 	for (i=0; i<quad_count; i++)
@@ -1828,16 +1842,18 @@ JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPDFStampInfoAlloc
 	FS_RESULT nRet= FS_Memory_Alloc(sizeof(FPDF_ANNOT_STAMPINFO),(FS_LPVOID*)&pStampInfo);
 	if (nRet)
 		throwException(pEnv,clss,nRet,"FPDFStampInfoAlloc: stamp info out of memory");
-
+	if(!pStampInfo)throwException(pEnv,clss,nRet,"FPDFStampInfoAlloc: stamp info out of memory");
 	pStampInfo->size = sizeof(FPDF_ANNOT_STAMPINFO);
 	pStampInfo->color = color;
 	pStampInfo->opacity = opacity;
 
 	int nLen = pEnv->GetStringLength(author);
 	if (nLen > 63) return (jint)NULL;
-	memset(pStampInfo->author, '\0', 64);
-	memcpy(pStampInfo->author, pEnv->GetStringChars(author, NULL), nLen*sizeof(FS_WCHAR));
-	pEnv->ReleaseStringChars(author, pStampInfo->author);
+
+	jchar* pAuthor = (jchar*)pEnv->GetStringChars(author, NULL);
+	memset(pStampInfo->author, '\0', 64*sizeof(FS_WCHAR));
+	memcpy(pStampInfo->author, pAuthor, nLen*sizeof(FS_WCHAR));
+	pEnv->ReleaseStringChars(author, pAuthor);
 
 	if (!rect) return (jint)NULL;
 	FS_RECTF pdfRect;
@@ -1854,9 +1870,11 @@ JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPDFStampInfoAlloc
 
 	nLen = pEnv->GetStringLength(subject);
 	if (nLen > 31) return (jint)NULL;
-	memset(pStampInfo->name, '\0', 32);
-	memcpy(pStampInfo->name, pEnv->GetStringChars(subject, NULL), nLen*sizeof(FS_WCHAR));
-	pEnv->ReleaseStringChars(subject, pStampInfo->name);
+
+	jchar* pName = (jchar*)pEnv->GetStringChars(subject, NULL);
+	memset(pStampInfo->name, '\0', 32*sizeof(FS_WCHAR));
+	memcpy(pStampInfo->name, pName, nLen*sizeof(FS_WCHAR));
+	pEnv->ReleaseStringChars(subject, pName);
 
 	pStampInfo->imgtype = FPDF_IMAGETYPE_JPG;
 	
@@ -1869,7 +1887,7 @@ JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPDFStampInfoAlloc
 	nRet = FS_Memory_Alloc(len,(FS_LPVOID*)&buffer);
 	if (nRet)
 		throwException(pEnv,clss,nRet,"FPDFStampInfoAlloc: file buffer out of memory");
-
+	if (!buffer)throwException(pEnv,clss,nRet,"FPDFStampInfoAlloc: file buffer out of memory");
 	fread(buffer, 1, len, file);
 	fclose(file);
 	pStampInfo->imgdatasize = len;
@@ -1895,7 +1913,7 @@ JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPDFFileAttachmentInfoAll
 	FS_RESULT nRet = FS_Memory_Alloc(sizeof(FPDF_ANNOT_FILEATTACHMENTINFO),(FS_LPVOID*)&pFileAttachmentInfo);
 	if (nRet)
 		throwException(pEnv,clss,nRet,"FPDFFileAttachmentInfoAlloc: file attachment info out of memory");
-
+	if(!pFileAttachmentInfo)throwException(pEnv,clss,nRet,"FPDFFileAttachmentInfoAlloc: file attachment info out of memory");
 	pFileAttachmentInfo->size = sizeof(FPDF_ANNOT_FILEATTACHMENTINFO);
 	pFileAttachmentInfo->color = color;
 	pFileAttachmentInfo->icon = 0;
@@ -1903,9 +1921,10 @@ JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPDFFileAttachmentInfoAll
 
 	int nLen = pEnv->GetStringLength(author);
 	if (nLen > 63) return (jint)NULL;
-	memset(pFileAttachmentInfo->author, '\0', 64);
-	memcpy(pFileAttachmentInfo->author, pEnv->GetStringChars(author, NULL), nLen*sizeof(FS_WCHAR));
-	pEnv->ReleaseStringChars(author, pFileAttachmentInfo->author);
+	jchar* pAuthor = (jchar*)pEnv->GetStringChars(author, NULL);
+	memset(pFileAttachmentInfo->author, '\0', 64*sizeof(FS_WCHAR));
+	memcpy(pFileAttachmentInfo->author, pAuthor, nLen*sizeof(FS_WCHAR));
+	pEnv->ReleaseStringChars(author, pAuthor);
 
 	if (!rect) return (jint)NULL;
 	FS_RECTF pdfRect;
@@ -1929,7 +1948,7 @@ JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPDFFileAttachmentInfoAll
 	nRet = FS_Memory_Alloc(len,(FS_LPVOID*)&buffer);
 	if (nRet)
 		throwException(pEnv,clss,nRet,"FPDFFileAttachmentInfoAlloc: file attachment buffer out of memory");
-
+	if(!buffer)throwException(pEnv,clss,nRet,"FPDFFileAttachmentInfoAlloc: file attachment buffer out of memory");
 	fread(buffer, 1, len, file);
 	fclose(file);
 
@@ -2190,7 +2209,7 @@ JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FSEMBPauseHandlerAlloc
 	FS_RESULT nRet=FS_Memory_Alloc(sizeof(FS_PAUSE),(FS_LPVOID*)&pPause);
 	if (nRet)
 		throwException(pEnv,cls,nRet,"FSEMBPauseHandlerAlloc: out of memory");
-
+	if(!pPause)throwException(pEnv,cls,nRet,"NULL Pointer");
 	pPause->clientData = NULL;
 	pPause->NeedPauseNow =CPDF_Pause::NeedToPauseNow;
 
@@ -2269,6 +2288,7 @@ JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPSIInitAppCallback
 	FPSI_APPCALLBACK* pCallback = NULL;
 	FS_RESULT nRet = FS_Memory_Alloc(sizeof(FPSI_APPCALLBACK),(FS_LPVOID*)&pCallback);
 	if(nRet) throwException(pEnv,cls,nRet,"FPSIInitAppCallback: out of memory");
+	if(!pCallback)throwException(pEnv,cls,nRet,"NULL Pointer");
 	LOGD("FPSIInitAppCallback 4 %i",nRet);
 	return (jint)pCallback;
 }
@@ -2652,6 +2672,7 @@ JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FSFileWriteAlloc
 	FS_RESULT nRet = FS_Memory_Alloc(sizeof(FS_FILEWRITE),(FS_LPVOID*)&fileWrite);
 	if(nRet != FS_ERR_SUCCESS) 
 		throwException(pEnv,cls,FS_ERR_MEMORY,"FSFileWriteAlloc: out of memory.");
+	if(!fileWrite)throwException(pEnv,cls,nRet,"NULL Pointer");
 	fileWrite->GetSize = FileGetSize;
 	fileWrite->WriteBlock = FileWriterBlock;
 	fileWrite->Flush = FileFlush;

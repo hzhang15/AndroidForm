@@ -91,9 +91,10 @@ public class PDFDocument {
 	}
 	
 	public boolean InitFoxitFixedMemory() throws parameterException, invalidLicenseException{
-		EMBJavaSupport.FSMemInitFixedMemory(5*1024*1024);		
+		EMBJavaSupport.FSMemInitFixedMemory(8*1024*1024);		
 		EMBJavaSupport.FSInitLibrary(0);
-		EMBJavaSupport.FSUnlock("SDKEDTEMP", "019BF43365F8BF984D694D44332D9223EC4C95B7");	
+		//EMBJavaSupport.FSUnlock("SDKEDTEMP", "019BF43365F8BF984D694D44332D9223EC4C95B7");	
+		EMBJavaSupport.FSUnlock("SDKEDFZ1560", "759C262EECD8CD6828F31AB1D6637B806A1C82F6");
 		
 /////////formfiller implemention
 		if (mainView == null) 
@@ -189,6 +190,10 @@ public boolean InitPDFPage(int nPageIndex){
 	
 		EMBJavaSupport.FSBitmapFillColor(dib,0xff);
 		EMBJavaSupport.FPDFRenderPageStart(dib, nPDFCurPageHandler, -x, -y, pagewidth,pageheight, 0, 0, null, 0);
+		if (nPDFFormHandler != 0)
+		{
+		EMBJavaSupport.FPDFFormFillDraw(nPDFFormHandler, dib, nPDFCurPageHandler, -x, -y, pagewidth, pageheight, 0, 0);
+		}
 		byte[] bmpbuf=EMBJavaSupport.FSBitmapGetBuffer(dib);
 		
 		ByteBuffer bmBuffer = ByteBuffer.wrap(bmpbuf); 
@@ -202,7 +207,7 @@ public boolean InitPDFPage(int nPageIndex){
 		return bm;
 	}
   
-  public Bitmap getDirtyBitmap(Rect rect, int pwscale, int phscale){
+  public Bitmap getDirtyBitmap(int x,int y,Rect rect, int pwscale, int phscale){
 		Bitmap bm = null;
 		if(nPDFCurPageHandler == 0) {
 			return null;
@@ -216,13 +221,13 @@ public boolean InitPDFPage(int nPageIndex){
 			EMBJavaSupport.FSBitmapFillColor(dib,0xff);
 			int pagewidth=(int)(this.GetPageSizeX(nPDFCurPageHandler)*pwscale);
 			int pageheight=(int)(this.GetPageSizeY(nPDFCurPageHandler)*phscale);
-			EMBJavaSupport.FPDFRenderPageStart(dib, nPDFCurPageHandler, -rect.left, -rect.top, pagewidth, pageheight, 0, 0, null, 0);
+			EMBJavaSupport.FPDFRenderPageStart(dib, nPDFCurPageHandler, -rect.left-x, -rect.top-y, pagewidth, pageheight, 0, 0, null, 0);
 		
 			
 			///formfiller implemention
 			if (nPDFFormHandler == 0)
 				return null;
-			EMBJavaSupport.FPDFFormFillDraw(nPDFFormHandler, dib, nPDFCurPageHandler, -rect.left, -rect.top, pagewidth, pageheight, 0, 0);
+			EMBJavaSupport.FPDFFormFillDraw(nPDFFormHandler, dib, nPDFCurPageHandler, -rect.left-x, -rect.top-y, pagewidth, pageheight, 0, 0);
 			///
 			
 			byte[] bmpbuf=EMBJavaSupport.FSBitmapGetBuffer(dib);
