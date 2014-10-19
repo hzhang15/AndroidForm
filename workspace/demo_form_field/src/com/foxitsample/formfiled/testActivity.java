@@ -43,6 +43,7 @@ public class testActivity extends Activity {
     private Button hitButton;
     private Bitmap screenImage;
     private TextView coordinatesTextView;
+    private TextView touchCoordinates;
     DrawingButtonInitializer initializer;
     private static final String fileName = "/mnt/sdcard/HS-268%20Water%20Heater%20-%20Agreement.pdf";
     //private static final String fileName ="/mnt/sdcard/FoxitForm.pdf";
@@ -75,6 +76,7 @@ public class testActivity extends Activity {
     	downButton=(Button)findViewById(R.id.downButton);
     	hitButton = (Button)findViewById(R.id.hitButton);
     	coordinatesTextView=(TextView)findViewById(R.id.coordinatesView);
+    	touchCoordinates = (TextView)findViewById(R.id.touchCoordinates);
     	textview1.setText(seekBar1.getProgress() + "/" + seekBar1.getMax());
     	textview2.setText(seekBar1.getProgress() + "/" + seekBar2.getMax());
     	textview3.setText(seekBar1.getProgress() + "/" + seekBar3.getMax());
@@ -91,6 +93,9 @@ public class testActivity extends Activity {
     		@Override
     		public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) 
     		{
+    			if(progresValue==0){
+    				progresValue=1;
+    			}
     			progress = progresValue;
     		}
     		public void onStartTrackingTouch(SeekBar seekBar)
@@ -414,6 +419,10 @@ public class testActivity extends Activity {
 		public TextView getCoordinatesTextView() {
 			return coordinatesTextView;
 		}
+		public TextView getTouchCoordinateView() {
+			return touchCoordinates;
+		}
+		
 
 
 }

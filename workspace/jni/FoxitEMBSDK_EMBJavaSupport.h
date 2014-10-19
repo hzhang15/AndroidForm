@@ -230,6 +230,8 @@ JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPDFPagePageToDeviceRect
 JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPDFRenderPageStart
   (JNIEnv *, jclass, jint, jint, jint, jint, jint, jint, jint, jint, jobject, jint);
 
+JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPDFRenderPageStartQuickDraw
+  (JNIEnv *, jclass, jint, jint, jint, jint, jint, jint, jint, jint, jint);
 /*
  * Class:     FoxitEMBSDK_EMBJavaSupport
  * Method:    FPDFRenderPageContinue

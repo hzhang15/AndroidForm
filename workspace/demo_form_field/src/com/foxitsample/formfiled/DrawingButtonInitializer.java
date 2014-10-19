@@ -24,6 +24,8 @@ public class DrawingButtonInitializer {
 	testActivity activity;
 	float currentX;
 	float currentY;
+	float touchup;
+	
 
 	// only this one to be called
 	public static DrawingButtonInitializer generateInitializer(testActivity activity) {
@@ -92,7 +94,7 @@ public class DrawingButtonInitializer {
 			@Override
 			public void onClick(View v) {
 				
-				int startX = activity.getSeekBar1().getProgress();
+				/*int startX = activity.getSeekBar1().getProgress();
 				int startY = activity.getSeekBar2().getProgress();
 				float clickX = startX + currentX;
 				float clickY = startY + currentY;
@@ -114,7 +116,7 @@ public class DrawingButtonInitializer {
 
 				EMBJavaSupport.FPDFFormFillOnMouseMove(activity.getDoc().getPDFFormHandler(), activity.getDoc().getCurPDFPageHandler(), 0, point.x, point.y);
 				EMBJavaSupport.FPDFFormFillOnLButtonUp(activity.getDoc().getPDFFormHandler(), activity.getDoc().getCurPDFPageHandler(), 0, point.x, point.y);
-
+*/
 				
 			}
 
@@ -151,6 +153,54 @@ public class DrawingButtonInitializer {
 
 			}
 
+		});
+		
+		activity.getTestimage().setOnTouchListener(new View.OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				
+				currentX =event.getX();
+				currentY=event.getY();
+				drawLines();
+				int startX = activity.getSeekBar1().getProgress();
+				int startY = activity.getSeekBar2().getProgress();
+				float clickX = startX + currentX;
+				float clickY = startY + currentY;
+				int size_x= (int)activity.getDoc().GetPageSizeX(activity.getDoc().getCurPDFPageHandler())*activity.getSeekBar7().getProgress();
+				int size_y= (int)activity.getDoc().GetPageSizeY(activity.getDoc().getCurPDFPageHandler())*activity.getSeekBar8().getProgress();
+				switch (event.getAction())
+				{
+					
+					case MotionEvent.ACTION_DOWN:
+
+						//activity.getTouchCoordinateView().setText("##X:" + (event.getX()+startX) + "##Y:" + (event.getY()+startY));
+
+						
+						
+						
+						String coordinatesText = "touch X:" + clickX + " touch Y:" + clickY;
+						activity.getCoordinatesTextView().setText(coordinatesText);
+						
+						PointF point = new EMBJavaSupport().new PointF();
+						point.x = currentX;//clickX;
+						point.y = currentY;//clickY;
+						
+						EMBJavaSupport.FPDFPageDeviceToPagePointF(activity.getDoc().getCurPDFPageHandler(), -startX,-startY,size_x , size_y, 0, point);
+						EMBJavaSupport.FPDFFormFillOnMouseMove(activity.getDoc().getPDFFormHandler(), activity.getDoc().getCurPDFPageHandler(), 0, point.x, point.y);
+						EMBJavaSupport.FPDFFormFillOnLButtonDown(activity.getDoc().getPDFFormHandler(), activity.getDoc().getCurPDFPageHandler(), 0, point.x, point.y);
+					case MotionEvent.ACTION_UP:
+						//EMBJavaSupport.FPDFFormFillOnMouseMove(activity.getDoc().getPDFFormHandler(), activity.getDoc().getCurPDFPageHandler(), 0, point.x, point.y);
+						//EMBJavaSupport.FPDFFormFillOnLButtonUp(activity.getDoc().getPDFFormHandler(), activity.getDoc().getCurPDFPageHandler(), 0, point.x, point.y);
+					case MotionEvent.ACTION_MOVE:
+						/*activity.getTouchCoordinateView().setText("##X:" + (event.getX()+startX) + "##Y:" + (event.getY()+startY));
+						activity.getTestimage().setImageBitmap(activity.getDoc().getPageBitmapQD(-((int)clickX), (int)clickY, activity.getSeekBar3().getProgress(), activity.getSeekBar4().getProgress(), activity.getSeekBar7().getProgress(), activity.getSeekBar8().getProgress()));
+						activity.getTestimage().setImageBitmap(activity.getDoc().getPageBitmap(-((int)clickX), (int)clickY, activity.getSeekBar3().getProgress(), activity.getSeekBar4().getProgress(), activity.getSeekBar7().getProgress(), activity.getSeekBar8().getProgress()));
+						//activity.getTouchCoordinateView().setText("##X:"+event.getAxisValue(0)+"##Y"+event.getAxisValue(1));
+						//EMBJavaSupport.FPDFFormFillOnMouseMove(activity.getDoc().getPDFFormHandler(), activity.getDoc().getCurPDFPageHandler(), 0, point.x, point.y);*/
+				}
+				return true;
+			}
 		});
 	}
 	

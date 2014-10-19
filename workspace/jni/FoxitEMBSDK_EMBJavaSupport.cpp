@@ -896,7 +896,27 @@ JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPDFRenderPageStart
 	
 	return (jint)ret;
 }
+//FPDF_RenderPage_StartQuickDraw (FS_BITMAP dib, FPDF_PAGE page, FS_INT32 start_x, FS_INT32 start_y, FS_INT32 size_x, FS_INT32 size_y, FS_INT32 rotate, FS_INT32 flags, FS_PAUSE *pause)
+JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPDFRenderPageStartQuickDraw
+  (JNIEnv *pEnv, jclass cls, jint dib, jint page, jint start_x, jint start_y, jint size_x, jint size_y, jint rotate, jint flags, jint pauseHandler)
+{
+	FPDF_PAGE pPDFPage = (FPDF_PAGE)page;
+	if (!pPDFPage)
+		throwException(pEnv,cls,FS_ERR_PARAM,"FPDFRenderPageStart: null page pointer");
+	
+	FS_BITMAP bitmap = (FS_BITMAP)dib;
+	if (!bitmap)
+		throwException(pEnv,cls,FS_ERR_PARAM,"FPDFRenderPageStart: null dib pointer");
+	FS_PAUSE* pPause = (FS_PAUSE*)pauseHandler;
+//	pPause.FSPause_NeedPauseNow = CPDF_Pause::NeedToPauseNow;
+	//LOGCQ("pPause->clientData=%1$d",pPause->clientData);
+	//LOGCQ("pPause->FSPause_NeedPauseNow=%1$x",pPause->FSPause_NeedPauseNow);
+	FS_RESULT ret;
 
+		ret = FPDF_RenderPage_StartQuickDraw(bitmap, pPDFPage, start_x, start_y, size_x, size_y, rotate, flags, pPause);
+
+	return (jint)ret;
+}
 JNIEXPORT jint JNICALL Java_FoxitEMBSDK_EMBJavaSupport_FPDFRenderPageContinue
   (JNIEnv *pEnv, jclass cls, jint page, jint pauseHandler)
 {

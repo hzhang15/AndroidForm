@@ -20,6 +20,7 @@ public class EMBJavaSupport {
 	//Users can get descriptions of these interfaces from FoxitEMBSDK Help Document.
 	///////////////////
 	static{
+		System.loadLibrary("stlport_shared");//needed for lower versions of Android
 		System.loadLibrary("fpdfembedsdk");
 	}
 	
@@ -63,6 +64,8 @@ public class EMBJavaSupport {
 	public static native int FPDFRenderPageStart(int dib, int page, int start_x, int start_y, 
 											int size_x, int size_y, int rotate, int flags,
 											Rectangle clip, int pauseHandler) throws toBeContinuedException, parameterException, memoryException, statusException, errorException;
+	public static native int FPDFRenderPageStartQuickDraw(int dib, int page, int start_x, int start_y, 
+			int size_x, int size_y, int rotate, int flags, int pauseHandler) throws toBeContinuedException, parameterException, memoryException, statusException, errorException;
 	public static native int FPDFRenderPageContinue(int page, int pauseHandler) throws toBeContinuedException, parameterException, memoryException, statusException, errorException;
 	public static native void FPDFPageDeviceToPagePointF(int page, int startx, int starty, int sizex, int sizey,
 											int rotate, PointF point);

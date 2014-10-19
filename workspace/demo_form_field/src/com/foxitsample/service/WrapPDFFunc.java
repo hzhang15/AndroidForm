@@ -291,6 +291,41 @@ public class WrapPDFFunc
 		return bm;
 	}
 	
+	public Bitmap getPageBitmapQD(int displayWidth, int displayHeight){
+		if(nPDFCurPageHandler == 0) {
+			return null;
+		} 
+								
+		Bitmap bm;
+		bm = Bitmap.createBitmap(displayWidth,displayHeight,Bitmap.Config.ARGB_8888);
+		
+		int dib;
+		try {
+			dib = EMBJavaSupport.FSBitmapCreate(displayWidth, displayHeight, 7, null, 0);
+	
+		EMBJavaSupport.FSBitmapFillColor(dib,0xff);
+		EMBJavaSupport.FPDFRenderPageStartQuickDraw(dib, nPDFCurPageHandler, 0, 0, displayWidth, displayHeight, 0, 0, 0);
+
+		
+		///formfiller implemention
+		/*if (nPDFFormHandler == 0)
+			return null;
+		EMBJavaSupport.FPDFFormFillDraw(nPDFFormHandler, dib, nPDFCurPageHandler, 0, 0, displayWidth, displayHeight, 0, 0);
+		///*/
+		
+		byte[] bmpbuf=EMBJavaSupport.FSBitmapGetBuffer(dib);
+		
+		ByteBuffer bmBuffer = ByteBuffer.wrap(bmpbuf); 
+		bm.copyPixelsFromBuffer(bmBuffer);
+		
+		EMBJavaSupport.FSBitmapDestroy(dib);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return bm;
+	}
+	
 	public Bitmap getDirtyBitmap(Rect rect, int nSizex, int nSizey){
 		Bitmap bm = null;
 		if(nPDFCurPageHandler == 0) {

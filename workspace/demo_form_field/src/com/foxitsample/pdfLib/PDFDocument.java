@@ -207,6 +207,37 @@ public boolean InitPDFPage(int nPageIndex){
 		return bm;
 	}
   
+  public Bitmap getPageBitmapQD(int x, int y, int displayWidth, int displayHeight, int pwscale, int phscale){
+		if(nPDFCurPageHandler == 0) {
+			return null;
+		} 
+		int pagewidth=(int)(this.GetPageSizeX(nPDFCurPageHandler)*pwscale);
+		int pageheight=(int)(this.GetPageSizeY(nPDFCurPageHandler)*phscale);							
+		Bitmap bm;
+	    bm = Bitmap.createBitmap(displayWidth,displayHeight,Bitmap.Config.ARGB_8888);	
+		int dib;
+		try {
+			dib = EMBJavaSupport.FSBitmapCreate(displayWidth, displayHeight, 7, null, 0);
+	
+		EMBJavaSupport.FSBitmapFillColor(dib,0xff);
+		EMBJavaSupport.FPDFRenderPageStartQuickDraw(dib, nPDFCurPageHandler, -x, -y, pagewidth,pageheight, 0, 0, 0);
+		/*if (nPDFFormHandler != 0)
+		{
+		EMBJavaSupport.FPDFFormFillDraw(nPDFFormHandler, dib, nPDFCurPageHandler, -x, -y, pagewidth, pageheight, 0, 0);
+		}*/
+		byte[] bmpbuf=EMBJavaSupport.FSBitmapGetBuffer(dib);
+		
+		ByteBuffer bmBuffer = ByteBuffer.wrap(bmpbuf); 
+		bm.copyPixelsFromBuffer(bmBuffer);
+		
+		EMBJavaSupport.FSBitmapDestroy(dib);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return bm;
+	}
+  
   public Bitmap getDirtyBitmap(int x,int y,Rect rect, int pwscale, int phscale){
 		Bitmap bm = null;
 		if(nPDFCurPageHandler == 0) {
