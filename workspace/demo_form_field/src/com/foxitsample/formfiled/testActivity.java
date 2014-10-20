@@ -1,19 +1,12 @@
 package com.foxitsample.formfiled;
 
-import com.foxitsample.exception.parameterException;
 import com.foxitsample.pdfLib.PDFDocument;
 
 import FoxitEMBSDK.EMBJavaSupport;
-import FoxitEMBSDK.EMBJavaSupport.PointF;
-import FoxitEMBSDK.EMBJavaSupport.RectangleF;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.os.Bundle;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -196,7 +189,6 @@ public class testActivity extends Activity {
 		try {
 			nRet = doc.InitFoxitFixedMemory();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
   		if (nRet != true){
@@ -214,7 +206,7 @@ public class testActivity extends Activity {
   			return;
   		}
   		
- 		int nPageCount = doc.GetPageCounts();
+ 		doc.GetPageCounts();
   		
   		nRet = doc.InitPDFPage(0);
   		if (nRet != true){
@@ -225,7 +217,7 @@ public class testActivity extends Activity {
 //			
 //			@Override
 //			public boolean onTouch(View v, MotionEvent event) {
-//				// TODO Auto-generated method stub
+//				// 
 //				int actionType=event.getAction()&MotionEvent.ACTION_MASK;
 //				int actionId=event.getAction()&MotionEvent.ACTION_POINTER_ID_MASK;
 //				actionId=actionId>>8;  
@@ -275,7 +267,6 @@ public class testActivity extends Activity {
 //		}
         
         protected void onDestroy() {
-        	// TODO Auto-generated method stub
         				
         		boolean nRet = doc.ClosePDFPage();
         		if (nRet != false){

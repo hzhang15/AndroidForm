@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 
 import com.foxitsample.exception.invalidLicenseException;
 import com.foxitsample.exception.parameterException;
-import com.foxitsample.formfiled.testActivity;
 
 import FoxitEMBSDK.EMBCallbackUpdateDelegate;
 import FoxitEMBSDK.EMBJavaSupport;
@@ -13,7 +12,7 @@ import FoxitEMBSDK.EMBJavaSupport.CPDFJsPlatform;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 
-public class PDFDocument {
+public class PDFDocument implements PDFDocumentDelegate {
 	public String fileName;
 	private static final String password = "";
 	public int nFileRead = 0;
@@ -40,7 +39,7 @@ public class PDFDocument {
 		try {
 			nRet = this.InitFoxitFixedMemory();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			// 
 			e.printStackTrace();
 		} 
   		if (nRet != true){
@@ -124,7 +123,6 @@ public class PDFDocument {
 			nPDFDocHandler = EMBJavaSupport.FPDFDocLoad(nFileRead, password);
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -145,13 +143,11 @@ public boolean InitPDFPage(int nPageIndex){
 		try {
 			nPDFCurPageHandler = EMBJavaSupport.FPDFPageLoad(nPDFDocHandler, nPageIndex);
 		} catch (parameterException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}	
 		try {
 			EMBJavaSupport.FPDFPageStartParse(nPDFCurPageHandler, 0, 0);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 		///formfiller implemention
@@ -171,7 +167,6 @@ public boolean InitPDFPage(int nPageIndex){
 		try {
 			nPageCount = EMBJavaSupport.FPDFDocGetPageCount(nPDFDocHandler);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 		return nPageCount;
@@ -201,7 +196,6 @@ public boolean InitPDFPage(int nPageIndex){
 		
 		EMBJavaSupport.FSBitmapDestroy(dib);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return bm;
@@ -237,7 +231,6 @@ public boolean InitPDFPage(int nPageIndex){
 			
 			EMBJavaSupport.FSBitmapDestroy(dib);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 		
@@ -264,7 +257,6 @@ public boolean InitPDFPage(int nPageIndex){
 		EMBJavaSupport.FPDFFormFillOnAfterLoadPage(nPDFFormHandler, nPageHandler);
 		///
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		return nPageHandler;
@@ -306,7 +298,6 @@ public boolean InitPDFPage(int nPageIndex){
 			
 			EMBJavaSupport.FPDFPageClose(nPDFCurPageHandler);
 		} catch (parameterException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		nPDFCurPageHandler = 0;
@@ -333,7 +324,6 @@ public boolean ClosePDFDoc(){
 		try {
 			EMBJavaSupport.FPDFDocClose(nPDFDocHandler);
 		} catch (parameterException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		nPDFDocHandler = 0;
@@ -349,5 +339,65 @@ public boolean ClosePDFDoc(){
 	EMBJavaSupport.FSMemDestroyMemory();
 	return true;
 }
+
+	@Override
+	public int getCurrentPageIndex() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setCurrentPageIndex(int currentPageIndex) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void HitCurrentPageAtPoint(float x, float y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setEMBCallbackUpdateDelegate(EMBCallbackUpdateDelegate delegate) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setPageSize(float x, float y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public float getPageWidth() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public float getPageHeight() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Bitmap getCurrentPageBitmapFromRect(Rect rect) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void LoadDocumentFromPath(String path) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void closeDocument() {
+		// TODO Auto-generated method stub
+		
+	}
       
 }

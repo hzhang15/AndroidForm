@@ -5,16 +5,11 @@ import FoxitEMBSDK.EMBJavaSupport;
 import FoxitEMBSDK.EMBJavaSupport.PointF;
 import FoxitEMBSDK.EMBJavaSupport.RectangleF;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.ImageView;
 
 public class InteractionLogic implements EMBCallbackUpdateDelegate {
 
@@ -145,7 +140,7 @@ public class InteractionLogic implements EMBCallbackUpdateDelegate {
 				}*/
 				activity.getTestimage().getLayoutParams().width = activity.getSeekBar3().getProgress();
 				activity.getTestimage().getLayoutParams().height = activity.getSeekBar4().getProgress();
-				activity.setScreenImage(null);
+				//activity.setScreenImage(null);
 				activity.setScreenImage(activity.getDoc().generateImage(0,pwscale,phscale,rect));
 				
 				renewCoords();
@@ -277,7 +272,6 @@ public class InteractionLogic implements EMBCallbackUpdateDelegate {
 
 	@Override
 	public int getPageHandlerFromIndex(int documentHandler, int pageIndex) {
-		// TODO Auto-generated method stub
 		
 		
 		
@@ -286,13 +280,11 @@ public class InteractionLogic implements EMBCallbackUpdateDelegate {
 
 	@Override
 	public int getCurrentPageHandler(int documentHandler) {
-		// TODO Auto-generated method stub
 		return activity.getDoc().getPageHandler(documentHandler);
 	}
 
 	@Override
 	public void bringUpTextField(int field, String focustext, int nTextLen) {
-		// TODO Auto-generated method stub
 		activity.createAndroidTextField(focustext);
 	}
 }

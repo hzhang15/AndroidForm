@@ -21,8 +21,6 @@ import com.foxitsample.formfiled.testActivity;
 
 public class WrapPDFFunc
 {
-	/** state variables*/
-	private static final String TAG = "WrapPDFFunc";
 	private static final String fileName = "/mnt/sdcard/HS-268%20Water%20Heater%20-%20Agreement.pdf";//FoxitForm
 	private static final String password = "";
 	private int nFileRead = 0;
@@ -123,7 +121,6 @@ public class WrapPDFFunc
 			nPDFDocHandler = EMBJavaSupport.FPDFDocLoad(nFileRead, password);
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		///formfiller implemention
@@ -155,7 +152,6 @@ public class WrapPDFFunc
 		try {
 			EMBJavaSupport.FPDFDocClose(nPDFDocHandler);
 		} catch (parameterException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		nPDFDocHandler = 0;
@@ -177,7 +173,6 @@ public class WrapPDFFunc
 		try {
 			nPDFCurPageHandler = EMBJavaSupport.FPDFPageLoad(nPDFDocHandler, nPageIndex);
 		} catch (parameterException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -185,7 +180,6 @@ public class WrapPDFFunc
 		try {
 			EMBJavaSupport.FPDFPageStartParse(nPDFCurPageHandler, 0, 0);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 	
@@ -217,7 +211,6 @@ public class WrapPDFFunc
 		EMBJavaSupport.FPDFFormFillOnAfterLoadPage(nPDFFormHandler, nPageHandler);
 		///
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		return nPageHandler;
@@ -233,7 +226,6 @@ public class WrapPDFFunc
 		try {
 			EMBJavaSupport.FPDFPageClose(nPDFCurPageHandler);
 		} catch (parameterException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		nPDFCurPageHandler = 0;
@@ -252,7 +244,6 @@ public class WrapPDFFunc
 		try {
 			nPageCount = EMBJavaSupport.FPDFDocGetPageCount(nPDFDocHandler);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 		return nPageCount;
@@ -287,7 +278,6 @@ public class WrapPDFFunc
 		
 		EMBJavaSupport.FSBitmapDestroy(dib);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return bm;
@@ -321,7 +311,6 @@ public class WrapPDFFunc
 			
 			EMBJavaSupport.FSBitmapDestroy(dib);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 		
