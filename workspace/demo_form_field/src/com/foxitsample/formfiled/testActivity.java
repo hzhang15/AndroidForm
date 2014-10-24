@@ -1,12 +1,13 @@
 package com.foxitsample.formfiled;
 
-import com.foxitsample.pdfLib.PDFDocument;
-
-import FoxitEMBSDK.EMBJavaSupport;
+import com.foxitsample.config.FoxitConst;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.view.Display;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -37,9 +38,9 @@ public class testActivity extends Activity {
     private Bitmap screenImage;
     private TextView coordinatesTextView;
     InteractionLogic interactionLogic;
-    private static final String fileName = "/mnt/sdcard/HS-268%20Water%20Heater%20-%20Agreement.pdf";
+    //private static final String fileName = "/mnt/sdcard/HS-268%20Water%20Heater%20-%20Agreement.pdf";
     //private static final String fileName ="/mnt/sdcard/FoxitForm.pdf";
-    public PDFDocument doc=null;
+    //public PDFDocument doc=null;
     public void onCreate(Bundle savedInstanceState) {    	         
     	super.onCreate(savedInstanceState);
     	setContentView(R.layout.test);
@@ -48,16 +49,12 @@ public class testActivity extends Activity {
     	seekBarStartY=(SeekBar)findViewById(R.id.seekBar2);
     	seekBarImageWidth=(SeekBar)findViewById(R.id.seekBar3);
     	seekBarImageHeight=(SeekBar)findViewById(R.id.seekBar4);
-    	//seekBar5=(SeekBar)findViewById(R.id.seekBar5);
-    	//seekBar6=(SeekBar)findViewById(R.id.seekBar6);
     	seekBarScaleX=(SeekBar)findViewById(R.id.seekBar7);
     	seekBarScaleY=(SeekBar)findViewById(R.id.seekBar8);
     	textviewStartX=(TextView)findViewById(R.id.textview1);
     	textviewStartY=(TextView)findViewById(R.id.textview2);
     	textviewImageWidth=(TextView)findViewById(R.id.textview3);
     	textviewImageHeight=(TextView)findViewById(R.id.textview4);
-    	//textview5=(TextView)findViewById(R.id.textview5);
-    	//textview6=(TextView)findViewById(R.id.textview6);
     	textviewScaleX=(TextView)findViewById(R.id.textview7);
     	textviewScaleY=(TextView)findViewById(R.id.textview8);
     	testimage=(ImageView)findViewById(R.id.testimage); 
@@ -72,13 +69,16 @@ public class testActivity extends Activity {
     	textviewStartY.setText(seekBarStartX.getProgress() + "/" + seekBarStartY.getMax());
     	textviewImageWidth.setText(seekBarStartX.getProgress() + "/" + seekBarImageWidth.getMax());
     	textviewImageHeight.setText(seekBarStartX.getProgress() + "/" + seekBarImageHeight.getMax());
-    	//textview5.setText(seekBar1.getProgress() + "/" + seekBar5.getMax());
-    	//textview6.setText(seekBar1.getProgress() + "/" + seekBar6.getMax());
     	textviewScaleX.setText(seekBarStartX.getProgress() + "/" + seekBarScaleX.getMax());
     	textviewScaleY.setText(seekBarStartX.getProgress() + "/" + seekBarScaleY.getMax());
-    	
-    	interactionLogic = InteractionLogic.generateLogic(this);
-    	doc = new PDFDocument(fileName, interactionLogic);
+    	Context context = getApplicationContext();
+    	String filePath = context.getResources().getString(R.string._MNT_SDCARD_TEST_DOCUMENT);
+    	interactionLogic = InteractionLogic.generateLogic(this, filePath);
+    	Display display = getWindowManager().getDefaultDisplay();
+    	Point point = new Point();
+    	display.getSize(point);
+    	FoxitConst.SCREEN_WIDTH =  point.x;
+    	FoxitConst.SCREEN_HEIGHT = point.y;
     	testimage.setFocusable(true);
     	testimage.setFocusableInTouchMode(true);
     	seekBarStartX.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
@@ -185,34 +185,35 @@ public class testActivity extends Activity {
     		};
     	});
     	
-        boolean nRet=false;
-		try {
-			nRet = doc.InitFoxitFixedMemory();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
-  		if (nRet != true){
-  			return;
-  		}
+    	
+//        boolean nRet=false;
+//		try {
+//			nRet = doc.InitFoxitFixedMemory();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		} 
+//  		if (nRet != true){
+//  			return;
+//  		}
   		
-  		doc.LoadJbig2Decoder();
-  		doc.LoadJpeg2000Decoder();
-  		doc.LoadCNSFontCMap();
-  		doc.LoadKoreaFontCMap();
-  		doc.LoadJapanFontCMap();
-  		
-  		nRet = doc.InitPDFDoc();
-  		if (nRet != true){
-  			return;
-  		}
-  		
- 		doc.GetPageCounts();
-  		
-  		nRet = doc.InitPDFPage(0);
-  		if (nRet != true){
-  			return;
-  		}
- 
+//  		doc.LoadJbig2Decoder();
+//  		doc.LoadJpeg2000Decoder();
+//  		doc.LoadCNSFontCMap();
+//  		doc.LoadKoreaFontCMap();
+//  		doc.LoadJapanFontCMap();
+//  		
+//  		nRet = doc.InitPDFDoc();
+//  		if (nRet != true){
+//  			return;
+//  		}
+//  		
+// 		doc.GetPageCounts();
+//  		
+//  		nRet = doc.InitPDFPage(0);
+//  		if (nRet != true){
+//  			return;
+//  		}
+// 
 //    	testimage.setOnTouchListener(new View.OnTouchListener() {
 //			
 //			@Override
@@ -260,30 +261,12 @@ public class testActivity extends Activity {
 			intent.putExtra("key", bundle);
 			this.startActivityForResult(intent, 0);			
 		}
-//        public void invalidate(float left, float top, float right, float bottom){
-//        	
-//			interactionLogic.updateScreenImageInPDFCoordinates(left, top, right, bottom);
-//			
-//		}
         
         protected void onDestroy() {
-        				
-        		boolean nRet = doc.ClosePDFPage();
-        		if (nRet != false){
-        			System.exit(0);
-        		}
-        		
-        		nRet = doc.ClosePDFDoc();
-        		if (nRet != false){
-        			System.exit(0);
-        		}
-        		
-        		nRet = doc.DestroyFoxitFixedMemory();
-        		if (nRet != false){
-        			System.exit(0);
-        		}
         		
         		super.onDestroy();
+        		
+        		interactionLogic.sDKRelease();
         		
         }   
         @Override
@@ -292,12 +275,14 @@ public class testActivity extends Activity {
 			if (resultCode == RESULT_OK && requestCode == 0){
 				Bundle bundle = data.getBundleExtra("Result");
 				String text = bundle.getString("ResultValue");
-				EMBJavaSupport.FPDFFormFillOnSetText(doc.getPDFFormHandler(), doc.getCurPDFPageHandler(), text, 0);
+				//EMBJavaSupport.FPDFFormFillOnSetText(doc.getPDFFormHandler(), doc.getCurPDFPageHandler(), text, 0);
+				interactionLogic.putTextToCurrentFormField(text);
+				interactionLogic.refresh();
 			}
 			super.onActivityResult(requestCode, resultCode, data);
-			EMBJavaSupport.FPDFFormFillOnKillFocus(doc.getCurPDFPageHandler());
+			//EMBJavaSupport.FPDFFormFillOnKillFocus(doc.getCurPDFPageHandler());
 			//testimage.setImageBitmap(screenImage);
-			interactionLogic.refresh();
+			
 		}
         
 		public Bitmap getScreenImage() {
@@ -324,29 +309,26 @@ public class testActivity extends Activity {
 		public Button getMainbutton() {
 			return mainbutton;
 		}
-		public SeekBar getSeekBar1() {
+		public SeekBar getSeekBarStartX() {
 			return seekBarStartX;
 		}
-		public SeekBar getSeekBar2() {
+		public SeekBar getSeekBarStartY() {
 			return seekBarStartY;
 		}
-		public SeekBar getSeekBar3() {
+		public SeekBar getSeekBarImageWidth() {
 			return seekBarImageWidth;
 		}
-		public SeekBar getSeekBar4() {
+		public SeekBar getSeekBarImageHeight() {
 			return seekBarImageHeight;
 		}
-		public SeekBar getSeekBar7() {
+		public SeekBar getSeekBarScaleX() {
 			return seekBarScaleX;
 		}
-		public SeekBar getSeekBar8() {
+		public SeekBar getSeekBarScaleY() {
 			return seekBarScaleY;
 		}
 		public void setScreenImage(Bitmap screenImage) {
 			this.screenImage = screenImage;
-		}
-		public PDFDocument getDoc() {
-			return doc;
 		}
 		public TextView getCoordinatesTextView() {
 			return coordinatesTextView;

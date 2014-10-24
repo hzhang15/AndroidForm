@@ -4,7 +4,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.foxitsample.exception.*;
-import com.foxitsample.formfiled.testActivity;
 
 
 public class EMBJavaSupport {
@@ -67,7 +66,8 @@ public class EMBJavaSupport {
 											int rotate, PointF point);
 	public static native void FPDFPagePageToDeviceRectF(int page, int startx, int starty, int sizex, int sizey,
 											int rotate, RectangleF rect);
-	
+	public static native void FPDFPagePageToDevicePointF(int page, int startx, int starty, int sizex, int sizey,
+			int rotate, PointF point);
 	////////////////////
 	//Base data Module
 	public static native void FSInitLibrary(int hInstance);
@@ -142,7 +142,7 @@ public class EMBJavaSupport {
 //			}
 			
 			assert(delegate != null);
-			delegate.refresh(page, left, top, right, bottom);
+			delegate.refresh(page, left, top, right, bottom); //UI callback
 			
 		}
 		
@@ -180,12 +180,6 @@ public class EMBJavaSupport {
 		}
 		
 		public int FFI_GetPage(int document, int page_index){
-//			if (mainView != null){
-//				int nPageHandler = mainView.doc.getPageHandler(page_index);
-//				return nPageHandler;
-//			}
-//			return 0;
-			
 			
 			assert(delegate != null);
 			return delegate.getPageHandlerFromIndex(document, page_index);
@@ -193,10 +187,6 @@ public class EMBJavaSupport {
 		}
 		
 		public int FFI_GetCurrentPage(int document){
-//			if (mainView != null){
-//				return mainView.doc.getCurPDFPageHandler();
-//			}
-//			return 0;
 			
 			assert(delegate != null);
 			return delegate.getCurrentPageHandler(document);

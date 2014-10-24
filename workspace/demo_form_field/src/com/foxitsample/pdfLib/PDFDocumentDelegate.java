@@ -1,22 +1,10 @@
 package com.foxitsample.pdfLib;
 
-import android.graphics.Bitmap;
-import android.graphics.Rect;
-import FoxitEMBSDK.EMBCallbackUpdateDelegate;
-
 public interface PDFDocumentDelegate {
-	void LoadDocumentFromPath(String path);
-	void closeDocument();
-	int getCurrentPageIndex();
-	void setCurrentPageIndex(int currentPageIndex);
-	void HitCurrentPageAtPoint(float x, float y);
-	void setEMBCallbackUpdateDelegate(EMBCallbackUpdateDelegate delegate);
-	/*
-	 * will apply to all the pages
-	 */
-	void setPageSize(float x, float y);
-	float getPageWidth();
-	float getPageHeight();
-	Bitmap getCurrentPageBitmapFromRect(Rect rect);
-	
+	void close();
+	int getPageHandlerFormIndex(int index);// for form callback
+	PDFPage getPageAtIndex(int pageIndex);
+	int getDocumentHandler();
+	void setAllPageSizes(int width, int height);//when one page size is set, it will be set to all page sizes
+
 }

@@ -32,7 +32,6 @@ public class PDF_TaskServer {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -154,7 +153,6 @@ class PDF_TaskThread  extends Thread {
 				try {
 					Thread.sleep(50);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					break;
 				}

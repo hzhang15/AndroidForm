@@ -1,5 +1,10 @@
 package com.foxitsample.formfiled;
 
+import com.foxitsample.config.FoxitAlgorithm;
+import com.foxitsample.config.FoxitConst;
+import com.foxitsample.pdfLib.PDFDocument;
+import com.foxitsample.pdfLib.PDFPage;
+
 import FoxitEMBSDK.EMBCallbackUpdateDelegate;
 import FoxitEMBSDK.EMBJavaSupport;
 import FoxitEMBSDK.EMBJavaSupport.PointF;
@@ -8,7 +13,9 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.View;
 
 public class InteractionLogic implements EMBCallbackUpdateDelegate {
@@ -21,12 +28,13 @@ public class InteractionLogic implements EMBCallbackUpdateDelegate {
 	testActivity activity;
 	float currentX;
 	float currentY;
-
+	private PDFDocument doc=null;
+	
 	// only this one to be called
-	public static InteractionLogic generateLogic(testActivity activity) {
+	public static InteractionLogic generateLogic(testActivity activity, String testDocumentPath) {
 		InteractionLogic initializer = new InteractionLogic();
 		initializer.setActivity(activity);
-		initializer.init();
+		initializer.init(testDocumentPath);
 
 		return initializer;
 	}
@@ -35,7 +43,9 @@ public class InteractionLogic implements EMBCallbackUpdateDelegate {
 
 	}
 
-	private void init() {
+	private void init(String testDocumentPath) {
+		
+		doc = PDFDocument.generatePDFDocumentFromPath(testDocumentPath, this);//new PDFDocument(testDocumentPath, this);
 		activity.getUpButton().setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -89,29 +99,33 @@ public class InteractionLogic implements EMBCallbackUpdateDelegate {
 			@Override
 			public void onClick(View v) {
 				
-				int startX = activity.getSeekBar1().getProgress();
-				int startY = activity.getSeekBar2().getProgress();
+				int startX = activity.getSeekBarStartX().getProgress();
+				int startY = activity.getSeekBarStartY().getProgress();
+				
+				//int imageWidth = activity.getSeekBarImageWidth().getProgress();
+				//int imageHeight = activity.getSeekBarImageHeight().getProgress();
+				
 				float clickX = startX + currentX;
 				float clickY = startY + currentY;
 				
-				int size_x= (int)activity.getDoc().GetPageSizeX(activity.getDoc().getCurPDFPageHandler())*activity.getSeekBar7().getProgress();
-				int size_y= (int)activity.getDoc().GetPageSizeY(activity.getDoc().getCurPDFPageHandler())*activity.getSeekBar8().getProgress();
+				int sizeX = FoxitConst.SCREEN_WIDTH * activity.getSeekBarScaleX().getProgress();
+				int sizeY = FoxitConst.SCREEN_HEIGHT * activity.getSeekBarScaleY().getProgress();
+				
+				doc.setAllPageSizes(sizeX, sizeY);
 				
 				String coordinatesText = "touch X:" + clickX + " touch Y:" + clickY;
 				activity.getCoordinatesTextView().setText(coordinatesText);
 				
 				PointF point = new EMBJavaSupport().new PointF();
-				point.x = currentX;//clickX;
-				point.y = currentY;//clickY;
+				point.x = clickX;
+				point.y = clickY;
+								
+				//Rect rect = new Rect(startX, startY, startX+imageWidth ,startY+imageHeight);
 				
-				EMBJavaSupport.FPDFPageDeviceToPagePointF(activity.getDoc().getCurPDFPageHandler(), -startX,-startY,size_x , size_y, 0, point);
-		
-				EMBJavaSupport.FPDFFormFillOnMouseMove(activity.getDoc().getPDFFormHandler(), activity.getDoc().getCurPDFPageHandler(), 0, point.x, point.y);
-				EMBJavaSupport.FPDFFormFillOnLButtonDown(activity.getDoc().getPDFFormHandler(), activity.getDoc().getCurPDFPageHandler(), 0, point.x, point.y);
-
-				EMBJavaSupport.FPDFFormFillOnMouseMove(activity.getDoc().getPDFFormHandler(), activity.getDoc().getCurPDFPageHandler(), 0, point.x, point.y);
-				EMBJavaSupport.FPDFFormFillOnLButtonUp(activity.getDoc().getPDFFormHandler(), activity.getDoc().getCurPDFPageHandler(), 0, point.x, point.y);
-
+				//doc.hitCurrentPageAtPointInRect(point.x, point.y, rect);
+				
+				PDFPage page = doc.getPageAtIndex(0);
+				page.click(point.x, point.y);
 				
 			}
 
@@ -123,25 +137,23 @@ public class InteractionLogic implements EMBCallbackUpdateDelegate {
 			public void onClick(View v) {
 				
 				Rect rect = new Rect();
-				rect.left = activity.getSeekBar1().getProgress();
-				rect.top = activity.getSeekBar2().getProgress();
-				rect.right = activity.getSeekBar1().getProgress() + activity.getSeekBar3().getProgress();
-				rect.bottom = activity.getSeekBar2().getProgress() + activity.getSeekBar4().getProgress();
-				int pwscale=activity.getSeekBar7().getProgress();
-				int phscale=activity.getSeekBar8().getProgress();
-				/*if (doc.nPDFCurPageHandler!=0)
-				{
-					doc.ClosePDFPage();	
-				}
-				if (doc.nPDFDocHandler != 0)
-				{   
-					doc.ClosePDFDoc();
-				    doc.DestroyFoxitFixedMemory();	    
-				}*/
-				activity.getTestimage().getLayoutParams().width = activity.getSeekBar3().getProgress();
-				activity.getTestimage().getLayoutParams().height = activity.getSeekBar4().getProgress();
-				//activity.setScreenImage(null);
-				activity.setScreenImage(activity.getDoc().generateImage(0,pwscale,phscale,rect));
+				rect.left = activity.getSeekBarStartX().getProgress();
+				rect.top = activity.getSeekBarStartY().getProgress();
+				rect.right = activity.getSeekBarStartX().getProgress() + activity.getSeekBarImageWidth().getProgress();
+				rect.bottom = activity.getSeekBarStartY().getProgress() + activity.getSeekBarImageHeight().getProgress();
+				int scaleX = activity.getSeekBarScaleX().getProgress();
+				int scaleY = activity.getSeekBarScaleY().getProgress();
+			
+				int sizeX = FoxitConst.SCREEN_WIDTH * scaleX;
+				int sizeY = FoxitConst.SCREEN_HEIGHT * scaleY;
+				
+				doc.setAllPageSizes(sizeX, sizeY);
+
+				activity.getTestimage().getLayoutParams().width = activity.getSeekBarImageWidth().getProgress();
+				activity.getTestimage().getLayoutParams().height = activity.getSeekBarImageHeight().getProgress();
+				PDFPage page = doc.getPageAtIndex(0);
+				Bitmap bitmap = page.getBitmapFromRect(rect);
+				activity.setScreenImage(bitmap);
 				
 				renewCoords();
 				drawLines();
@@ -202,64 +214,53 @@ public class InteractionLogic implements EMBCallbackUpdateDelegate {
 		drawLines();
 	}
 	
-	public void updateScreenImageInPDFCoordinates(float left, float top, float right, float bottom)
+	private void updateScreenImageInPDFCoordinates(float left, float top, float right, float bottom)
 	{
-		int l, t, r, b;
 		RectangleF rect = new EMBJavaSupport().new RectangleF();
+		
 		rect.left = left;
 		rect.top = top;
 		rect.right = right;
 		rect.bottom = bottom;
-		int startx=-activity.getSeekBar1().getProgress();
-		int starty=-activity.getSeekBar2().getProgress();
-		int size_x= (int)activity.getDoc().GetPageSizeX(activity.getDoc().getCurPDFPageHandler())*activity.getSeekBar7().getProgress();
-		int size_y= (int)activity.getDoc().GetPageSizeY(activity.getDoc().getCurPDFPageHandler())*activity.getSeekBar8().getProgress();
-		EMBJavaSupport.FPDFPagePageToDeviceRectF(activity.getDoc().getCurPDFPageHandler(), startx, starty,size_x , size_y, 0, rect);
-		l = (int)rect.left;
-		//t = (int)rect.bottom;
-		r = (int)rect.right;
-		//b = (int)rect.top;
-		b = (int)rect.bottom;
-		t = (int)rect.top;	
-		/*
-		Canvas tempcanvas=new Canvas(dirtybm);
-		tempcanvas.drawBitmap(dirtybm,0,0,null);
-		testimage.setImageDrawable(new BitmapDrawable(getResources(), dirtybm));
-		*/
-		//surfaceview.setDirtyRect(l, t, r, b);
-		//surfaceview.setDirtyBitmap(doc.getDirtyBitmap(rc, seekBar3.getProgress(),seekBar4.getProgress()));
-		//surfaceview.OnDraw();
-		if(l>activity.getSeekBar3().getProgress()||r<0)
-		{
-			return;
-		}
-		if(t>activity.getSeekBar4().getProgress()||b<0)
-		{
-			return;
-		}
-		if(r>activity.getSeekBar3().getProgress())
-		{
-			r=activity.getSeekBar3().getProgress();
-		}
-		if(b>activity.getSeekBar4().getProgress())
-		{
-			b=activity.getSeekBar4().getProgress();
-		}
-		if(l<0)
-		{
-			l=0;
-		}
-		if(t<0)
-		{
-			t=0;
-		}
-		Rect rc = new Rect(l,t,r,b);
-		Bitmap dirtybm=activity.getDoc().getDirtyBitmap(activity.getSeekBar1().getProgress(),activity.getSeekBar2().getProgress(),rc,activity.getSeekBar7().getProgress(), activity.getSeekBar8().getProgress());
-		int width=dirtybm.getWidth();
-		int height=dirtybm.getHeight();
+		int startX=activity.getSeekBarStartX().getProgress();
+		int startY=activity.getSeekBarStartY().getProgress();
+		//int size_x= (int)FoxitConst.SCREEN_WIDTH*activity.getSeekBarScaleX().getProgress();
+		//int size_y= (int)FoxitConst.SCREEN_HEIGHT*activity.getSeekBarScaleY().getProgress();
+		//EMBJavaSupport.FPDFPagePageToDeviceRectF(activity.getDoc().getCurPDFPageHandler(), startx, starty,size_x , size_y, 0, rect);
+		
+		PDFPage page = doc.getPageAtIndex(0);
+		Rect deviceRect = page.transferPDFRect(rect);
+		Rect drawingAreaRect = getDrawingAreaRect();
+		
+		PointF leftTop = new EMBJavaSupport().new PointF();
+		PointF rightBottom = new EMBJavaSupport().new PointF();
+		leftTop.x = left;
+		leftTop.y = bottom;
+		rightBottom.x = right;
+		rightBottom.y = top;
+		
+		Point deviceLeftUp = page.transferPDFPoint(leftTop);
+		Point deviceRightBottom = page.transferPDFPoint(rightBottom);
+		
+		Log.i("InterationLogic", "left up" + deviceLeftUp.x + " "+ deviceLeftUp.y);
+		Log.i("InteractionLogic", "right bottom" + deviceRightBottom.x + " " + deviceRightBottom.y);
+		
+		FoxitAlgorithm.interceptFirstRect(deviceRect, drawingAreaRect);
+		
+		if(deviceRect.left == 0 && deviceRect.right == 0 && deviceRect.top == 0 && deviceRect.bottom == 0)
+		return;
+		
+		Bitmap bitmap = page.getBitmapFromRect(deviceRect);
+		
+		int width=bitmap.getWidth();
+		int height=bitmap.getHeight();
 		int[] dirtypixels=new int[width*height];
-		dirtybm.getPixels(dirtypixels, 0, width, 0, 0, width, height);
-		activity.getScreenImage().setPixels(dirtypixels, 0, width, l, t, width, height);
+		bitmap.getPixels(dirtypixels, 0, width, 0, 0, width, height);
+		
+		int smallImageInternalLeft = deviceRect.left - startX;
+		int smallImageInternalTop = deviceRect.top - startY; 
+		activity.getScreenImage().setPixels(dirtypixels, 0, width, smallImageInternalLeft, smallImageInternalTop, width, height);
+		
 	}
 
 	@Override
@@ -273,18 +274,50 @@ public class InteractionLogic implements EMBCallbackUpdateDelegate {
 	@Override
 	public int getPageHandlerFromIndex(int documentHandler, int pageIndex) {
 		
+		//return activity.getDoc().getPageHandler(documentHandler);
+		return doc.getPageHandlerFormIndex(pageIndex);
 		
-		
-		return activity.getDoc().getPageHandler(documentHandler);
 	}
 
 	@Override
 	public int getCurrentPageHandler(int documentHandler) {
-		return activity.getDoc().getPageHandler(documentHandler);
+		//return activity.getDoc().getPageHandler(documentHandler);
+		
+		PDFPage page = doc.getPageAtIndex(0);
+		return page.getPageHandler();
+		//return doc.getCurrentPDFPageHandler();
 	}
 
 	@Override
 	public void bringUpTextField(int field, String focustext, int nTextLen) {
 		activity.createAndroidTextField(focustext);
+	}
+	
+	Rect getDrawingAreaRect()
+	{
+		int startX = activity.getSeekBarStartX().getProgress();
+		int startY = activity.getSeekBarStartY().getProgress();
+		
+		int imageWidth = activity.getSeekBarImageWidth().getProgress();
+		int imageHeight = activity.getSeekBarImageHeight().getProgress();
+		
+		Rect rect = new Rect();
+		rect.left = startX;
+		rect.right = startX + imageWidth;
+		rect.top = startY;
+		rect.bottom = startY + imageHeight;
+		
+		return rect;
+	}
+	
+	public void sDKRelease()
+	{
+		doc.close();
+	}
+
+	@Override
+	public void putTextToCurrentFormField(String text) {
+		PDFPage page = doc.getPageAtIndex(0);
+		page.setTextInActiveFormField(text);
 	}
 }

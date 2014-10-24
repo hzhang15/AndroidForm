@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.Rect;
 
 import com.foxitsample.exception.*;
-import com.foxitsample.formfiled.testActivity;
 
 /**
  * defined for a wrap for All PDF implements¡£
@@ -21,8 +20,6 @@ import com.foxitsample.formfiled.testActivity;
 
 public class WrapPDFFunc
 {
-	private static final String fileName = "/mnt/sdcard/HS-268%20Water%20Heater%20-%20Agreement.pdf";//FoxitForm
-	private static final String password = "";
 	private int nFileRead = 0;
 	private int nPDFDocHandler = 0;
 	private int nPDFCurPageHandler = 0;
@@ -110,26 +107,26 @@ public class WrapPDFFunc
 		EMBJavaSupport.FSFontLoadKoreaCMap();
 	}
 	
-	/** Load PDF Document*/
-	public boolean InitPDFDoc(){
-		
-		/** Init a FS_FileRead structure*/
-		try {
-			nFileRead = EMBJavaSupport.FSFileReadAlloc(fileName);
-
-	
-			nPDFDocHandler = EMBJavaSupport.FPDFDocLoad(nFileRead, password);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		///formfiller implemention
-		nPDFFormHandler = EMBJavaSupport.FPDFDocInitFormFillEnviroument(nPDFDocHandler, nPDFFormFillerInfo);
-		if (nPDFFormHandler == 0)
-			return false;
-				
-		return true;
-	}
+//	/** Load PDF Document*/
+//	public boolean InitPDFDoc(){
+//		
+//		/** Init a FS_FileRead structure*/
+//		try {
+//			nFileRead = EMBJavaSupport.FSFileReadAlloc(fileName);
+//
+//	
+//			nPDFDocHandler = EMBJavaSupport.FPDFDocLoad(nFileRead, password);
+//
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		///formfiller implemention
+//		nPDFFormHandler = EMBJavaSupport.FPDFDocInitFormFillEnviroument(nPDFDocHandler, nPDFFormFillerInfo);
+//		if (nPDFFormHandler == 0)
+//			return false;
+//				
+//		return true;
+//	}
 	
 	/** Close PDF Document*/
 	public boolean ClosePDFDoc(){

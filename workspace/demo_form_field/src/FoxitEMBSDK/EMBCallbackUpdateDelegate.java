@@ -5,4 +5,5 @@ public interface EMBCallbackUpdateDelegate {
 	int getPageHandlerFromIndex(int documentHandler, int pageIndex);
 	int getCurrentPageHandler(int documentHandler);
 	void bringUpTextField(int field, String focustext, int nTextLen);
+	void putTextToCurrentFormField(String text);
 }

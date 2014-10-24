@@ -1,7 +1,5 @@
 package com.foxitsample.pdfLib;
 
-import java.nio.ByteBuffer;
-
 import com.foxitsample.exception.invalidLicenseException;
 import com.foxitsample.exception.parameterException;
 
@@ -9,15 +7,14 @@ import FoxitEMBSDK.EMBCallbackUpdateDelegate;
 import FoxitEMBSDK.EMBJavaSupport;
 import FoxitEMBSDK.EMBJavaSupport.CPDFFormFillerInfo;
 import FoxitEMBSDK.EMBJavaSupport.CPDFJsPlatform;
-import android.graphics.Bitmap;
-import android.graphics.Rect;
 
-public class PDFDocument implements PDFDocumentDelegate {
+public class PDFDocument implements PDFDocumentDelegate, PDFFormEnvironmentProviderDelegate {
 	public String fileName;
 	private static final String password = "";
 	public int nFileRead = 0;
 	public int nPDFDocHandler = 0;
 	public int nPDFCurPageHandler = 0;
+	PDFPage[] pdfPageArray;
 	
 	/** form*/
 	private EMBCallbackUpdateDelegate delegate = null;
@@ -27,69 +24,103 @@ public class PDFDocument implements PDFDocumentDelegate {
 	public int nPDFJsPlatform = 0;
     public int nPDFFormHandler = 0;
 	
-	public PDFDocument(String filePath, EMBCallbackUpdateDelegate delegate)
+	private PDFDocument(String filePath, EMBCallbackUpdateDelegate delegate)
 	{
 		this.fileName=filePath;
 		this.delegate=delegate;
+		init();
 	}
 	
-	public Bitmap generateImage(int pageIndex, int pwscale,int phscale, Rect viewRect)
-	{	
-		/*boolean nRet=false;
+	private void init()
+	{
+        boolean nRet=false;
 		try {
-			nRet = this.InitFoxitFixedMemory();
+			nRet = InitFoxitFixedMemory();
 		} catch (Exception e) {
-			// 
 			e.printStackTrace();
 		} 
   		if (nRet != true){
-  			return null;
-  		}
-  		nRet = this.InitPDFDoc();
-  		if (nRet != true){
-  			return null;
+  			return;
   		}
   		
- 		int nPageCount = this.GetPageCounts();
+  		LoadJbig2Decoder();
+  		LoadJpeg2000Decoder();
+  		LoadCNSFontCMap();
+  		LoadKoreaFontCMap();
+  		LoadJapanFontCMap();
   		
-  		nRet = this.InitPDFPage(0);
+  		nRet = InitPDFDoc();//do the file reading work
   		if (nRet != true){
-  			return null;
-  		}*/
-  		Bitmap bm=this.getPageBitmap(viewRect.left,viewRect.top,viewRect.width(), viewRect.height(),pwscale,phscale);
-  		return bm;
-		
+  			return;
+  		}
   		
+ 		int pageCount = GetPageCounts();
+  		pdfPageArray = new PDFPage[pageCount];
+  		
+  		for(int i = 0; i<pageCount; i++)
+  		{
+  			pdfPageArray[i] = new PDFPage(this, this, i);
+  		}
+ 		
 	}
 	
+//	private Bitmap generateImage(int pageIndex, int scaleX,int scaleY, Rect viewRect)
+//	{	
+//		/*boolean nRet=false;
+//		try {
+//			nRet = this.InitFoxitFixedMemory();
+//		} catch (Exception e) {
+//			// 
+//			e.printStackTrace();
+//		} 
+//  		if (nRet != true){
+//  			return null;
+//  		}
+//  		nRet = this.InitPDFDoc();
+//  		if (nRet != true){
+//  			return null;
+//  		}
+//  		
+// 		int nPageCount = this.GetPageCounts();
+//  		
+//  		nRet = this.InitPDFPage(0);
+//  		if (nRet != true){
+//  			return null;
+//  		}*/
+//  		Bitmap bm=this.getPageBitmap(viewRect.left,viewRect.top,viewRect.width(), viewRect.height(),scaleX,scaleY);
+//  		return bm;
+//		
+//  		
+//	}
+	
 	/** Load jbig2 decoder.*/
-	public void LoadJbig2Decoder(){
+	private void LoadJbig2Decoder(){
 		EMBJavaSupport.FSLoadJbig2Decoder();
 	}
 	
 	/** Load jpeg2000 decoder. */
-	public void LoadJpeg2000Decoder(){
+	private void LoadJpeg2000Decoder(){
 		EMBJavaSupport.FSLoadJpeg2000Decoder();
 	}
 	
 	/** */
-	public void LoadJapanFontCMap(){
+	private void LoadJapanFontCMap(){
 		EMBJavaSupport.FSFontLoadJapanCMap();
 		EMBJavaSupport.FSFontLoadJapanExtCMap();
 	}
 	
 	/** */
-	public void LoadCNSFontCMap(){
+	private void LoadCNSFontCMap(){
 		EMBJavaSupport.FSFontLoadGBCMap();
 		EMBJavaSupport.FSFontLoadGBExtCMap();
 		EMBJavaSupport.FSFontLoadCNSCMap();
 	}
 	
-	public void LoadKoreaFontCMap(){
+	private void LoadKoreaFontCMap(){
 		EMBJavaSupport.FSFontLoadKoreaCMap();
 	}
 	
-	public boolean InitFoxitFixedMemory() throws parameterException, invalidLicenseException{
+	private boolean InitFoxitFixedMemory() throws parameterException, invalidLicenseException{
 		EMBJavaSupport.FSMemInitFixedMemory(8*1024*1024);		
 		EMBJavaSupport.FSInitLibrary(0);
 		//EMBJavaSupport.FSUnlock("SDKEDTEMP", "019BF43365F8BF984D694D44332D9223EC4C95B7");	
@@ -117,7 +148,7 @@ public class PDFDocument implements PDFDocumentDelegate {
 		///////////////////
 		return true;
 	}
-    public boolean InitPDFDoc(){
+	private boolean InitPDFDoc(){
 		try {
 			nFileRead = EMBJavaSupport.FSFileReadAlloc(fileName);
 			nPDFDocHandler = EMBJavaSupport.FPDFDocLoad(nFileRead, password);
@@ -134,30 +165,7 @@ public class PDFDocument implements PDFDocumentDelegate {
 		return true;
 	}
     
-public boolean InitPDFPage(int nPageIndex){
-		
-		if (nPDFDocHandler == 0){
-			return false;
-		}
-		
-		try {
-			nPDFCurPageHandler = EMBJavaSupport.FPDFPageLoad(nPDFDocHandler, nPageIndex);
-		} catch (parameterException e1) {
-			e1.printStackTrace();
-		}	
-		try {
-			EMBJavaSupport.FPDFPageStartParse(nPDFCurPageHandler, 0, 0);
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
-		///formfiller implemention
-				EMBJavaSupport.FPDFFormFillOnAfterLoadPage(nPDFFormHandler, nPDFCurPageHandler);
-				///
-		
-		return true;
-	}
-    
-  public int GetPageCounts(){
+	private int GetPageCounts(){
 		
 		if (nPDFDocHandler == 0){
 			return EMBJavaSupport.EMBJavaSupport_RESULT_ERROR;
@@ -171,233 +179,75 @@ public boolean InitPDFPage(int nPageIndex){
 		} 
 		return nPageCount;
 	}
-  public Bitmap getPageBitmap(int x, int y, int displayWidth, int displayHeight, int pwscale, int phscale){
-		if(nPDFCurPageHandler == 0) {
-			return null;
-		} 
-		int pagewidth=(int)(this.GetPageSizeX(nPDFCurPageHandler)*pwscale);
-		int pageheight=(int)(this.GetPageSizeY(nPDFCurPageHandler)*phscale);							
-		Bitmap bm;
-	    bm = Bitmap.createBitmap(displayWidth,displayHeight,Bitmap.Config.ARGB_8888);	
-		int dib;
-		try {
-			dib = EMBJavaSupport.FSBitmapCreate(displayWidth, displayHeight, 7, null, 0);
-	
-		EMBJavaSupport.FSBitmapFillColor(dib,0xff);
-		EMBJavaSupport.FPDFRenderPageStart(dib, nPDFCurPageHandler, -x, -y, pagewidth,pageheight, 0, 0, null, 0);
-		if (nPDFFormHandler != 0)
+
+	@Override
+	public void close() {
+		
+		for(PDFPage page: pdfPageArray)
 		{
-		EMBJavaSupport.FPDFFormFillDraw(nPDFFormHandler, dib, nPDFCurPageHandler, -x, -y, pagewidth, pageheight, 0, 0);
-		}
-		byte[] bmpbuf=EMBJavaSupport.FSBitmapGetBuffer(dib);
-		
-		ByteBuffer bmBuffer = ByteBuffer.wrap(bmpbuf); 
-		bm.copyPixelsFromBuffer(bmBuffer);
-		
-		EMBJavaSupport.FSBitmapDestroy(dib);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return bm;
-	}
-  
-  public Bitmap getDirtyBitmap(int x,int y,Rect rect, int pwscale, int phscale){
-		Bitmap bm = null;
-		if(nPDFCurPageHandler == 0) {
-			return null;
-		} 
-		
-		bm = Bitmap.createBitmap(rect.width(),rect.height(),Bitmap.Config.ARGB_8888);
-		int dib;
-		try {
-			dib = EMBJavaSupport.FSBitmapCreate(rect.width(), rect.height(), 7, null, 0);
-	
-			EMBJavaSupport.FSBitmapFillColor(dib,0xff);
-			int pagewidth=(int)(this.GetPageSizeX(nPDFCurPageHandler)*pwscale);
-			int pageheight=(int)(this.GetPageSizeY(nPDFCurPageHandler)*phscale);
-			EMBJavaSupport.FPDFRenderPageStart(dib, nPDFCurPageHandler, -rect.left-x, -rect.top-y, pagewidth, pageheight, 0, 0, null, 0);
-		
-			
-			///formfiller implemention
-			if (nPDFFormHandler == 0)
-				return null;
-			EMBJavaSupport.FPDFFormFillDraw(nPDFFormHandler, dib, nPDFCurPageHandler, -rect.left-x, -rect.top-y, pagewidth, pageheight, 0, 0);
-			///
-			
-			byte[] bmpbuf=EMBJavaSupport.FSBitmapGetBuffer(dib);
-			
-			ByteBuffer bmBuffer = ByteBuffer.wrap(bmpbuf); 
-			bm.copyPixelsFromBuffer(bmBuffer);
-			
-			EMBJavaSupport.FSBitmapDestroy(dib);
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
-		
-		return bm;
-	}
-  
-  public int getPageHandler(int nPageIndex){
-		if (nPDFDocHandler == 0){
-			return EMBJavaSupport.EMBJavaSupport_RESULT_ERROR;
+			page.close();
 		}
 		
-		if (nPageIndex == 0 && nPDFCurPageHandler != 0)
-			return nPDFCurPageHandler;
+		EMBJavaSupport.FPDFFormFillOnKillFocus(nPDFFormHandler);
 		
-		int nPageHandler=0;
-		try {
-			nPageHandler = EMBJavaSupport.FPDFPageLoad(nPDFDocHandler, nPageIndex);
-
-			EMBJavaSupport.FPDFPageStartParse(nPageHandler, 0, 0);
-
-		
-		///formfiller implemention
-		//EMBJavaSupport.FPDF_FormFill_OnAfterLoadPage(nPageHandler, nPDFFormHandler);
-		EMBJavaSupport.FPDFFormFillOnAfterLoadPage(nPDFFormHandler, nPageHandler);
-		///
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
-		return nPageHandler;
-	}
-  
-  public float GetPageSizeX(int pageIndex)
-	{
-		try {
-			return EMBJavaSupport.FPDFPageGetSizeX(nPDFCurPageHandler);
-		} catch (parameterException e) {
-			return 0;
-		}
-	}
-	
-	public float GetPageSizeY(int pageIndex)
-	{
-		
-		try {
-			return EMBJavaSupport.FPDFPageGetSizeY(nPDFCurPageHandler);
-		} catch (parameterException e) {
-			return 0;
-		}
-	}
-	public int getCurPDFPageHandler(){
-		return nPDFCurPageHandler;
-	}
-	
-	public int getPDFFormHandler(){
-		return nPDFFormHandler;
-	}
-	/** Close a PDF Page*/
-	public boolean ClosePDFPage(){
-		
-		if (nPDFCurPageHandler == 0){
-			return false;
-		}
-		//EMBJavaSupport.FPDFFormFillOnBeforeClosePage(nPDFFormHandler,nPDFCurPageHandler);
-		try {
-			
-			EMBJavaSupport.FPDFPageClose(nPDFCurPageHandler);
-		} catch (parameterException e) {
-			e.printStackTrace();
-		}
-		nPDFCurPageHandler = 0;
-		
-		return true;
-	}
-public boolean ClosePDFDoc(){
-		
-		if (nPDFDocHandler == 0){
-			return false;
-		}
-		
-		///formfiller implemention
 		EMBJavaSupport.FPDFDocExitFormFillEnviroument(nPDFFormHandler);
-		nPDFFormHandler = 0;
 		
 		EMBJavaSupport.FPDFFormFillerInfoRelease(nPDFFormFillerInfo);
-		nPDFFormFillerInfo = 0;
 		
 		EMBJavaSupport.FPDFJsPlatformRelease(nPDFJsPlatform);
-		nPDFJsPlatform = 0;
-		/////
 		
 		try {
 			EMBJavaSupport.FPDFDocClose(nPDFDocHandler);
 		} catch (parameterException e) {
 			e.printStackTrace();
 		}
-		nPDFDocHandler = 0;
-
 		
 		EMBJavaSupport.FSFileReadRelease(nFileRead);
-		nFileRead = 0;
 		
-		return true;
-	}
-    public boolean DestroyFoxitFixedMemory(){
-	EMBJavaSupport.FSDestroyLibrary();	
-	EMBJavaSupport.FSMemDestroyMemory();
-	return true;
-}
-
-	@Override
-	public int getCurrentPageIndex() {
-		// TODO Auto-generated method stub
-		return 0;
+		EMBJavaSupport.FSDestroyLibrary();	
+		EMBJavaSupport.FSMemDestroyMemory();
 	}
 
+	
+	//assuming already inited all the pagesŒ
 	@Override
-	public void setCurrentPageIndex(int currentPageIndex) {
-		// TODO Auto-generated method stub
-		
+	public int getPageHandlerFormIndex(int index) {
+		return pdfPageArray[index].getPageHandler();
 	}
 
-	@Override
-	public void HitCurrentPageAtPoint(float x, float y) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setEMBCallbackUpdateDelegate(EMBCallbackUpdateDelegate delegate) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setPageSize(float x, float y) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public float getPageWidth() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public float getPageHeight() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public Bitmap getCurrentPageBitmapFromRect(Rect rect) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void LoadDocumentFromPath(String path) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void closeDocument() {
-		// TODO Auto-generated method stub
-		
-	}
       
+	public static PDFDocument generatePDFDocumentFromPath(String path, EMBCallbackUpdateDelegate delegate)
+	{
+		
+		PDFDocument pdfDocument = new PDFDocument(path, delegate);
+		return pdfDocument;
+		
+	}
+	
+	//all the PDFPage objects are initialized during construction 
+	@Override
+	public PDFPage getPageAtIndex(int pageIndex) {
+		return pdfPageArray[pageIndex];
+	}
+
+	@Override
+	public int getDocumentHandler() {
+		return nPDFDocHandler;
+	}
+
+	@Override
+	public void setAllPageSizes(int width, int height) {
+		
+		for(PDFPage pdfPage : pdfPageArray)
+		{
+			pdfPage.setPageSize(width, height);
+		}
+		
+	}
+
+	@Override
+	public int getPDFFormHandler() {
+		return nPDFFormHandler;
+	}
+	
 }
