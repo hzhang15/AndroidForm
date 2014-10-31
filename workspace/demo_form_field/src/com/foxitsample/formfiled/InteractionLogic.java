@@ -17,6 +17,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 
 public class InteractionLogic implements EMBCallbackUpdateDelegate {
 
@@ -29,6 +30,7 @@ public class InteractionLogic implements EMBCallbackUpdateDelegate {
 	float currentX;
 	float currentY;
 	private PDFDocument doc=null;
+	protected String documentPath;
 	
 	// only this one to be called
 	public static InteractionLogic generateLogic(testActivity activity, String testDocumentPath) {
@@ -45,6 +47,7 @@ public class InteractionLogic implements EMBCallbackUpdateDelegate {
 
 	private void init(String testDocumentPath) {
 		
+		documentPath = testDocumentPath;
 		doc = PDFDocument.generatePDFDocumentFromPath(testDocumentPath, this);//new PDFDocument(testDocumentPath, this);
 		activity.getUpButton().setOnClickListener(new View.OnClickListener() {
 
@@ -160,6 +163,17 @@ public class InteractionLogic implements EMBCallbackUpdateDelegate {
 
 			}
 
+		});
+		
+		activity.getCloseOpenButton().setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				doc.close();
+				doc = PDFDocument.generatePDFDocumentFromPath(documentPath, InteractionLogic.this);
+			}
+			
 		});
 	}
 	

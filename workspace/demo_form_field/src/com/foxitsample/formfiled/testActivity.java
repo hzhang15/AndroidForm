@@ -35,6 +35,7 @@ public class testActivity extends Activity {
     private Button upButton;
     private Button downButton;
     private Button hitButton;
+    private Button closeOpenButton;
     private Bitmap screenImage;
     private TextView coordinatesTextView;
     InteractionLogic interactionLogic;
@@ -64,6 +65,7 @@ public class testActivity extends Activity {
     	upButton=(Button)findViewById(R.id.upButton);
     	downButton=(Button)findViewById(R.id.downButton);
     	hitButton = (Button)findViewById(R.id.hitButton);
+    	closeOpenButton = (Button)findViewById(R.id.closeOpenButton);
     	coordinatesTextView=(TextView)findViewById(R.id.coordinatesView);
     	textviewStartX.setText(seekBarStartX.getProgress() + "/" + seekBarStartX.getMax());
     	textviewStartY.setText(seekBarStartX.getProgress() + "/" + seekBarStartY.getMax());
@@ -333,6 +335,9 @@ public class testActivity extends Activity {
 		public TextView getCoordinatesTextView() {
 			return coordinatesTextView;
 		}
-
+		public Button getCloseOpenButton() {
+			return closeOpenButton;
+		}
+		
 
 }
