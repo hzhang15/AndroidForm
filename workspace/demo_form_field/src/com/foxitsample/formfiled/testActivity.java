@@ -8,8 +8,12 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Display;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -35,13 +39,14 @@ public class testActivity extends Activity {
     private Button upButton;
     private Button downButton;
     private Button hitButton;
-    private Button closeOpenButton;
+    private Button closeTestButton;
     private Bitmap screenImage;
     private TextView coordinatesTextView;
+    private RadioGroup docSelectRadioGroup;
     InteractionLogic interactionLogic;
-    //private static final String fileName = "/mnt/sdcard/HS-268%20Water%20Heater%20-%20Agreement.pdf";
-    //private static final String fileName ="/mnt/sdcard/FoxitForm.pdf";
-    //public PDFDocument doc=null;
+
+
+    
     public void onCreate(Bundle savedInstanceState) {    	         
     	super.onCreate(savedInstanceState);
     	setContentView(R.layout.test);
@@ -65,16 +70,17 @@ public class testActivity extends Activity {
     	upButton=(Button)findViewById(R.id.upButton);
     	downButton=(Button)findViewById(R.id.downButton);
     	hitButton = (Button)findViewById(R.id.hitButton);
-    	closeOpenButton = (Button)findViewById(R.id.closeOpenButton);
+    	closeTestButton = (Button)findViewById(R.id.closeTestButton);
     	coordinatesTextView=(TextView)findViewById(R.id.coordinatesView);
+    	docSelectRadioGroup = (RadioGroup)findViewById(R.id.docRadioGroup);
     	textviewStartX.setText(seekBarStartX.getProgress() + "/" + seekBarStartX.getMax());
     	textviewStartY.setText(seekBarStartX.getProgress() + "/" + seekBarStartY.getMax());
     	textviewImageWidth.setText(seekBarStartX.getProgress() + "/" + seekBarImageWidth.getMax());
     	textviewImageHeight.setText(seekBarStartX.getProgress() + "/" + seekBarImageHeight.getMax());
     	textviewScaleX.setText(seekBarStartX.getProgress() + "/" + seekBarScaleX.getMax());
     	textviewScaleY.setText(seekBarStartX.getProgress() + "/" + seekBarScaleY.getMax());
-    	Context context = getApplicationContext();
-    	String filePath = context.getResources().getString(R.string._MNT_SDCARD_TEST_DOCUMENT);
+    	final Context context = getApplicationContext();
+    	String filePath = context.getResources().getString(R.string._MNT_SDCARD_TEST_DOCUMENT1);
     	interactionLogic = InteractionLogic.generateLogic(this, filePath);
     	Display display = getWindowManager().getDefaultDisplay();
     	Point point = new Point();
@@ -186,70 +192,41 @@ public class testActivity extends Activity {
     			textviewScaleY.setText(progress + "/" + seekBar.getMax()); 		
     		};
     	});
-    	
-    	
-//        boolean nRet=false;
-//		try {
-//			nRet = doc.InitFoxitFixedMemory();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		} 
-//  		if (nRet != true){
-//  			return;
-//  		}
-  		
-//  		doc.LoadJbig2Decoder();
-//  		doc.LoadJpeg2000Decoder();
-//  		doc.LoadCNSFontCMap();
-//  		doc.LoadKoreaFontCMap();
-//  		doc.LoadJapanFontCMap();
-//  		
-//  		nRet = doc.InitPDFDoc();
-//  		if (nRet != true){
-//  			return;
-//  		}
-//  		
-// 		doc.GetPageCounts();
-//  		
-//  		nRet = doc.InitPDFPage(0);
-//  		if (nRet != true){
-//  			return;
-//  		}
-// 
-//    	testimage.setOnTouchListener(new View.OnTouchListener() {
-//			
-//			@Override
-//			public boolean onTouch(View v, MotionEvent event) {
-//				// 
-//				int actionType=event.getAction()&MotionEvent.ACTION_MASK;
-//				int actionId=event.getAction()&MotionEvent.ACTION_POINTER_ID_MASK;
-//				actionId=actionId>>8;  
-//				
-//				PointF point = new EMBJavaSupport().new PointF();
-//				point.x = event.getX();
-//				point.y = event.getY();	
-//				int startx=-seekBar1.getProgress();
-//				int starty=-seekBar2.getProgress();
-//				int size_x= (int)doc.GetPageSizeX(doc.getCurPDFPageHandler())*seekBar7.getProgress();
-//				int size_y= (int)doc.GetPageSizeY(doc.getCurPDFPageHandler())*seekBar8.getProgress();
-//				EMBJavaSupport.FPDFPageDeviceToPagePointF(doc.getCurPDFPageHandler(), startx,starty,size_x , size_y, 0, point);
-//				//point.x=point.x*seekBar7.getProgress();
-//				//point.y=point.y*seekBar8.getProgress();
-//				switch(actionType){
-//				case MotionEvent.ACTION_MOVE://
-//					EMBJavaSupport.FPDFFormFillOnMouseMove(doc.getPDFFormHandler(), doc.getCurPDFPageHandler(), 0, point.x, point.y);
-//					break;
-//				case MotionEvent.ACTION_DOWN:	//	
-//					EMBJavaSupport.FPDFFormFillOnMouseMove(doc.getPDFFormHandler(), doc.getCurPDFPageHandler(), 0, point.x, point.y);
-//					EMBJavaSupport.FPDFFormFillOnLButtonDown(doc.getPDFFormHandler(), doc.getCurPDFPageHandler(), 0, point.x, point.y);
-//					break;
-//				case MotionEvent.ACTION_UP:	//
-//					EMBJavaSupport.FPDFFormFillOnLButtonUp(doc.getPDFFormHandler(), doc.getCurPDFPageHandler(), 0, point.x, point.y);
-//					break;
-//				}
-//				return true;
-//			}
-//		});
+    	closeTestButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Context context = getApplicationContext();
+		    	String filePath = context.getResources().getString(R.string._MNT_SDCARD_TEST_DOCUMENT1);
+				interactionLogic.closeCurrentDocAndOpen(filePath);
+			}
+		});
+    	docSelectRadioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				switch(checkedId)
+				{
+					case R.id.doc1Radio:
+						interactionLogic.closeCurrentDocAndOpen(context.getString(R.string._MNT_SDCARD_TEST_DOCUMENT1));
+						break;
+					case R.id.doc2Radio:
+						interactionLogic.closeCurrentDocAndOpen(context.getString(R.string._MNT_SDCARD_TEST_DOCUMENT2));
+						break;
+					case R.id.savedRadio:
+						interactionLogic.saveCurrentDoc(context.getString(R.string._DATA_DATA_TEST_SAVED_DOCUMENT));
+						interactionLogic.closeCurrentDocAndOpen(context.getString(R.string._DATA_DATA_TEST_SAVED_DOCUMENT));
+						break;
+					case R.id.finaledRadio:
+						interactionLogic.flattenCurrentDoc();
+						interactionLogic.saveCurrentDoc(context.getString(R.string._DATA_DATA_TEST_FINALED_DOCUMENT));
+						interactionLogic.closeCurrentDocAndOpen(context.getString(R.string._DATA_DATA_TEST_FINALED_DOCUMENT));
+						break;
+
+				}
+			}
+		});
+
     	
     	
     	
@@ -335,9 +312,6 @@ public class testActivity extends Activity {
 		public TextView getCoordinatesTextView() {
 			return coordinatesTextView;
 		}
-		public Button getCloseOpenButton() {
-			return closeOpenButton;
-		}
-		
+
 
 }

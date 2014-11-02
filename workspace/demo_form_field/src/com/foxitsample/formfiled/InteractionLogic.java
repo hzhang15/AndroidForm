@@ -1,25 +1,20 @@
 package com.foxitsample.formfiled;
 
-import com.foxitsample.config.FoxitAlgorithm;
+//import com.foxitsample.config.FoxitAlgorithm;
 import com.foxitsample.config.FoxitConst;
-import com.foxitsample.pdfLib.PDFDocument;
-import com.foxitsample.pdfLib.PDFPage;
+import com.foxitsample.pdfLib.FoxitPDFDocument;
+import com.foxitsample.pdfLib.FoxitPDFFormField;
+import com.foxitsample.pdfLib.FoxitPDFPage;
 
-import FoxitEMBSDK.EMBCallbackUpdateDelegate;
-import FoxitEMBSDK.EMBJavaSupport;
-import FoxitEMBSDK.EMBJavaSupport.PointF;
-import FoxitEMBSDK.EMBJavaSupport.RectangleF;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
+import android.graphics.PointF;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 
-public class InteractionLogic implements EMBCallbackUpdateDelegate {
+public class InteractionLogic {
 
 	final static int STEP = 10;
 	public void setActivity(testActivity activity) {
@@ -29,8 +24,8 @@ public class InteractionLogic implements EMBCallbackUpdateDelegate {
 	testActivity activity;
 	float currentX;
 	float currentY;
-	private PDFDocument doc=null;
-	protected String documentPath;
+	private FoxitPDFDocument doc=null;
+	private FoxitPDFFormField currentFormField = null;
 	
 	// only this one to be called
 	public static InteractionLogic generateLogic(testActivity activity, String testDocumentPath) {
@@ -47,8 +42,7 @@ public class InteractionLogic implements EMBCallbackUpdateDelegate {
 
 	private void init(String testDocumentPath) {
 		
-		documentPath = testDocumentPath;
-		doc = PDFDocument.generatePDFDocumentFromPath(testDocumentPath, this);//new PDFDocument(testDocumentPath, this);
+		doc = FoxitPDFDocument.generatePDFDocumentFromPath(testDocumentPath);//new PDFDocument(testDocumentPath, this);
 		activity.getUpButton().setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -119,7 +113,7 @@ public class InteractionLogic implements EMBCallbackUpdateDelegate {
 				String coordinatesText = "touch X:" + clickX + " touch Y:" + clickY;
 				activity.getCoordinatesTextView().setText(coordinatesText);
 				
-				PointF point = new EMBJavaSupport().new PointF();
+				PointF point = new PointF();
 				point.x = clickX;
 				point.y = clickY;
 								
@@ -127,9 +121,14 @@ public class InteractionLogic implements EMBCallbackUpdateDelegate {
 				
 				//doc.hitCurrentPageAtPointInRect(point.x, point.y, rect);
 				
-				PDFPage page = doc.getPageAtIndex(0);
-				page.click(point.x, point.y);
+				FoxitPDFPage page = doc.getPageAtIndex(0);
+				FoxitPDFFormField formField = page.getFormFieldAt(point.x, point.y);
 				
+				if(formField != null)
+				{
+					currentFormField = formField;
+					activity.createAndroidTextField(formField.getText());
+				}
 			}
 
 		});
@@ -154,7 +153,7 @@ public class InteractionLogic implements EMBCallbackUpdateDelegate {
 
 				activity.getTestimage().getLayoutParams().width = activity.getSeekBarImageWidth().getProgress();
 				activity.getTestimage().getLayoutParams().height = activity.getSeekBarImageHeight().getProgress();
-				PDFPage page = doc.getPageAtIndex(0);
+				FoxitPDFPage page = doc.getPageAtIndex(0);
 				Bitmap bitmap = page.getBitmapFromRect(rect);
 				activity.setScreenImage(bitmap);
 				
@@ -163,17 +162,6 @@ public class InteractionLogic implements EMBCallbackUpdateDelegate {
 
 			}
 
-		});
-		
-		activity.getCloseOpenButton().setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				doc.close();
-				doc = PDFDocument.generatePDFDocumentFromPath(documentPath, InteractionLogic.this);
-			}
-			
 		});
 	}
 	
@@ -228,83 +216,55 @@ public class InteractionLogic implements EMBCallbackUpdateDelegate {
 		drawLines();
 	}
 	
-	private void updateScreenImageInPDFCoordinates(float left, float top, float right, float bottom)
+//	private void updateScreenImageInPDFCoordinates(float left, float top, float right, float bottom)
+//	{
+//		RectangleF rect = new EMBJavaSupport().new RectangleF();
+//		
+//		rect.left = left;
+//		rect.top = top;
+//		rect.right = right;
+//		rect.bottom = bottom;
+//		int startX=activity.getSeekBarStartX().getProgress();
+//		int startY=activity.getSeekBarStartY().getProgress();
+//		FoxitPDFPage page = doc.getPageAtIndex(0);
+//		Rect deviceRect = page.transferPDFRect(rect);
+//		Rect drawingAreaRect = getDrawingAreaRect();
+//		
+//		FoxitAlgorithm.interceptFirstRect(deviceRect, drawingAreaRect);
+//		
+//		if(deviceRect.left == 0 && deviceRect.right == 0 && deviceRect.top == 0 && deviceRect.bottom == 0)
+//		return;
+//		
+//		Bitmap bitmap = page.getBitmapFromRect(deviceRect);
+//		
+//		int width=bitmap.getWidth();
+//		int height=bitmap.getHeight();
+//		int[] dirtypixels=new int[width*height];
+//		bitmap.getPixels(dirtypixels, 0, width, 0, 0, width, height);
+//		
+//		int smallImageInternalLeft = deviceRect.left - startX;
+//		int smallImageInternalTop = deviceRect.top - startY; 
+//		activity.getScreenImage().setPixels(dirtypixels, 0, width, smallImageInternalLeft, smallImageInternalTop, width, height);
+//		
+//	}
+	
+	private void updateScreenImageAfterFormFilling()
 	{
-		RectangleF rect = new EMBJavaSupport().new RectangleF();
 		
-		rect.left = left;
-		rect.top = top;
-		rect.right = right;
-		rect.bottom = bottom;
 		int startX=activity.getSeekBarStartX().getProgress();
 		int startY=activity.getSeekBarStartY().getProgress();
-		//int size_x= (int)FoxitConst.SCREEN_WIDTH*activity.getSeekBarScaleX().getProgress();
-		//int size_y= (int)FoxitConst.SCREEN_HEIGHT*activity.getSeekBarScaleY().getProgress();
-		//EMBJavaSupport.FPDFPagePageToDeviceRectF(activity.getDoc().getCurPDFPageHandler(), startx, starty,size_x , size_y, 0, rect);
-		
-		PDFPage page = doc.getPageAtIndex(0);
-		Rect deviceRect = page.transferPDFRect(rect);
-		Rect drawingAreaRect = getDrawingAreaRect();
-		
-		PointF leftTop = new EMBJavaSupport().new PointF();
-		PointF rightBottom = new EMBJavaSupport().new PointF();
-		leftTop.x = left;
-		leftTop.y = bottom;
-		rightBottom.x = right;
-		rightBottom.y = top;
-		
-		Point deviceLeftUp = page.transferPDFPoint(leftTop);
-		Point deviceRightBottom = page.transferPDFPoint(rightBottom);
-		
-		Log.i("InterationLogic", "left up" + deviceLeftUp.x + " "+ deviceLeftUp.y);
-		Log.i("InteractionLogic", "right bottom" + deviceRightBottom.x + " " + deviceRightBottom.y);
-		
-		FoxitAlgorithm.interceptFirstRect(deviceRect, drawingAreaRect);
-		
-		if(deviceRect.left == 0 && deviceRect.right == 0 && deviceRect.top == 0 && deviceRect.bottom == 0)
-		return;
-		
-		Bitmap bitmap = page.getBitmapFromRect(deviceRect);
-		
-		int width=bitmap.getWidth();
-		int height=bitmap.getHeight();
+		Rect rect = currentFormField.getRect();
+		FoxitPDFPage page = doc.getPageAtIndex(0);
+		Bitmap partialBitmap = page.getBitmapFromRect(rect);
+		int width=partialBitmap.getWidth();
+		int height=partialBitmap.getHeight();
 		int[] dirtypixels=new int[width*height];
-		bitmap.getPixels(dirtypixels, 0, width, 0, 0, width, height);
+		partialBitmap.getPixels(dirtypixels, 0, width, 0, 0, width, height);
 		
-		int smallImageInternalLeft = deviceRect.left - startX;
-		int smallImageInternalTop = deviceRect.top - startY; 
+		int smallImageInternalLeft = rect.left - startX;
+		int smallImageInternalTop = rect.top - startY;
 		activity.getScreenImage().setPixels(dirtypixels, 0, width, smallImageInternalLeft, smallImageInternalTop, width, height);
-		
-	}
 
-	@Override
-	public void refresh(int page, float left, float top, float right,
-			float bottom) {
-		
-		updateScreenImageInPDFCoordinates(left, top, right, bottom);
-		
-	}
-
-	@Override
-	public int getPageHandlerFromIndex(int documentHandler, int pageIndex) {
-		
-		//return activity.getDoc().getPageHandler(documentHandler);
-		return doc.getPageHandlerFormIndex(pageIndex);
-		
-	}
-
-	@Override
-	public int getCurrentPageHandler(int documentHandler) {
-		//return activity.getDoc().getPageHandler(documentHandler);
-		
-		PDFPage page = doc.getPageAtIndex(0);
-		return page.getPageHandler();
-		//return doc.getCurrentPDFPageHandler();
-	}
-
-	@Override
-	public void bringUpTextField(int field, String focustext, int nTextLen) {
-		activity.createAndroidTextField(focustext);
 	}
 	
 	Rect getDrawingAreaRect()
@@ -329,9 +289,26 @@ public class InteractionLogic implements EMBCallbackUpdateDelegate {
 		doc.close();
 	}
 
-	@Override
-	public void putTextToCurrentFormField(String text) {
-		PDFPage page = doc.getPageAtIndex(0);
-		page.setTextInActiveFormField(text);
+	public void closeCurrentDocAndOpen(String filePath) {
+		doc.close();
+		doc = FoxitPDFDocument.generatePDFDocumentFromPath(filePath);
 	}
+	
+	public void saveCurrentDoc(String filePath){
+		doc.saveTo(filePath);
+	}
+	
+	public void flattenCurrentDoc(){
+		doc.flattenAllPages();
+	}
+	
+	public void putTextToCurrentFormField(String text)
+	{
+		assert(currentFormField!=null);
+		
+		currentFormField.setText(text);
+		
+		updateScreenImageAfterFormFilling();
+	}
+
 }

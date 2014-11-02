@@ -5,7 +5,7 @@
     android:orientation="vertical" >
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
         <Button
@@ -22,210 +22,244 @@
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <Button
-            android:id="@+id/closeOpenButton"
+            android:id="@+id/closeTestButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/CloseOpen" />
-
+            android:text="@string/closeTest" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <RadioGroup
+        android:id="@+id/docRadioGroup"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
-    	<TextView
-    	    android:layout_width="wrap_content"
+        <RadioButton
+            android:id="@+id/doc1Radio"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-    	    android:padding="8dp"
-    	    android:text="@string/x_value" />
+            android:checked="true"
+            android:text="@string/doc1" />
+
+        <RadioButton
+            android:id="@+id/doc2Radio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/doc2" />
+
+        <RadioButton
+            android:id="@+id/savedRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/savedDoc" />
+
+        <RadioButton
+            android:id="@+id/finaledRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/finaled" />
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/x_value" />
+
         <TextView
             android:id="@+id/textview1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-        <SeekBar
-        android:id="@+id/seekBar1"
-        android:layout_width="230dp"
-        android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:layout_marginLeft="25dp"
-        android:max="1000"/>
-       
-    </LinearLayout>
-    	  	
-   <LinearLayout
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:orientation="horizontal" >
 
-    	<TextView
-    	    android:layout_width="wrap_content"
+        <SeekBar
+            android:id="@+id/seekBar1"
+            android:layout_width="230dp"
             android:layout_height="wrap_content"
-    	    android:padding="8dp"
-    	    android:text="@string/y_value" />
+            android:layout_marginLeft="25dp"
+            android:max="1000"
+            android:padding="6dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/y_value" />
+
         <TextView
             android:id="@+id/textview2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-    	
-    	<SeekBar
-        android:id="@+id/seekBar2"
-        android:layout_width="230dp"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:layout_marginLeft="25dp"
-        android:max="1000"/>  
-    </LinearLayout> 
-        
+
+        <SeekBar
+            android:id="@+id/seekBar2"
+            android:layout_width="230dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:max="1000"
+            android:padding="8dp" />
+    </LinearLayout>
+
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
-    	<TextView
-    	    android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-    	    android:padding="8dp"
-    	    android:text="@string/width" />
+            android:padding="8dp"
+            android:text="@string/width" />
+
         <TextView
             android:id="@+id/textview3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-    	
-    	<SeekBar
-        android:id="@+id/seekBar3"
-        android:layout_width="230dp"
-        android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:layout_marginLeft="25dp"
-        android:max="1000"/>
+
+        <SeekBar
+            android:id="@+id/seekBar3"
+            android:layout_width="230dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:max="1000"
+            android:padding="6dp" />
     </LinearLayout>
-    	
+
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
-    	<TextView
-    	    android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-    	    android:padding="8dp"
-    	    android:text="@string/height" />
+            android:padding="8dp"
+            android:text="@string/height" />
+
         <TextView
             android:id="@+id/textview4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-    	
-    	<SeekBar
-        android:id="@+id/seekBar4"
-        android:layout_width="230dp"
-        android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:layout_marginLeft="25dp"
-        android:max="1000"/>
-     </LinearLayout>
-     
-  
-     
-     <LinearLayout
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-         android:orientation="horizontal" >
 
-    	<TextView
-    	    android:layout_width="wrap_content"
+        <SeekBar
+            android:id="@+id/seekBar4"
+            android:layout_width="230dp"
             android:layout_height="wrap_content"
-    	    android:padding="8dp"
-    	    android:text="@string/xscale" />
+            android:layout_marginLeft="25dp"
+            android:max="1000"
+            android:padding="6dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/xscale" />
+
         <TextView
             android:id="@+id/textview7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-    	
-    	<SeekBar
-        android:id="@+id/seekBar7"
-        android:layout_width="230dp"
-        android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:layout_marginLeft="25dp"
-        android:max="10"/>
-     </LinearLayout>
-     
-     <LinearLayout
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-         android:orientation="horizontal" >
 
-    	<TextView
-    	    android:layout_width="wrap_content"
+        <SeekBar
+            android:id="@+id/seekBar7"
+            android:layout_width="230dp"
             android:layout_height="wrap_content"
-    	    android:padding="8dp"
-    	    android:text="@string/yscale" />
+            android:layout_marginLeft="25dp"
+            android:max="10"
+            android:padding="6dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/yscale" />
+
         <TextView
             android:id="@+id/textview8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-    	
-    	<SeekBar
-        android:id="@+id/seekBar8"
-        android:layout_width="230dp"
+
+        <SeekBar
+            android:id="@+id/seekBar8"
+            android:layout_width="230dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:max="10"
+            android:padding="6dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/leftButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:text="@string/left" />
+
+        <Button
+            android:id="@+id/upButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="25dp"
+            android:text="@string/up" />
+
+        <Button
+            android:id="@+id/downButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="25dp"
+            android:text="@string/down" />
+
+        <Button
+            android:id="@+id/rightButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="25dp"
+            android:text="@string/right" />
+
+        <Button
+            android:id="@+id/hitButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="25dp"
+            android:text="@string/hit" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/testimage"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:layout_marginLeft="25dp"
-        android:max="10"/>
+        android:contentDescription="@string/description"
+        android:padding="12dp"
+        android:src="@drawable/ic_launcher" />
 
-     </LinearLayout>
-
-     <LinearLayout
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content" >
-
-         <Button
-             android:id="@+id/leftButton"
-             style="?android:attr/buttonStyleSmall"
-             android:layout_width="50dp"
-             android:layout_height="50dp"
-             android:text="@string/left" />
-
-         <Button
-             android:id="@+id/upButton"
-             style="?android:attr/buttonStyleSmall"
-             android:layout_width="50dp"
-             android:layout_height="50dp"
-             android:layout_marginLeft="25dp"
-             android:text="@string/up" />
-
-         <Button
-             android:id="@+id/downButton"
-             style="?android:attr/buttonStyleSmall"
-             android:layout_width="50dp"
-             android:layout_height="50dp"
-             android:layout_marginLeft="25dp"
-             android:text="@string/down" />
-
-         <Button
-             android:id="@+id/rightButton"
-             style="?android:attr/buttonStyleSmall"
-             android:layout_width="50dp"
-             android:layout_height="50dp"
-             android:layout_marginLeft="25dp"
-             android:text="@string/right" />
-
-         <Button
-             android:id="@+id/hitButton"
-             style="?android:attr/buttonStyleSmall"
-             android:layout_width="50dp"
-             android:layout_height="50dp"
-             android:layout_marginLeft="25dp"
-             android:text="@string/hit" />
-     </LinearLayout>
-
-     <ImageView
-         android:id="@+id/testimage"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:contentDescription="@string/description"
-         android:padding="12dp"
-         android:src="@drawable/ic_launcher" />
-        
 </LinearLayout>
