@@ -30,7 +30,7 @@ public class textfieldActivity extends Activity{
 
 			public boolean onEditorAction(TextView v, int actionId,
 					KeyEvent event) {
-				if(actionId == EditorInfo.IME_NULL){
+				if(actionId == EditorInfo.IME_ACTION_DONE){
 					Intent resIntent = new Intent();
 					Bundle bundle = new Bundle();
 					String value = editText.getText().toString();
