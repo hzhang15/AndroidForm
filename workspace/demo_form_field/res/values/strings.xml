@@ -21,6 +21,15 @@
 	<string name="down">V</string>
 	<string name="hit">HIT</string>
 	<string name="Coordinates">0.0,0.0</string>
-	<string name="_MNT_SDCARD_TEST_DOCUMENT">/mnt/sdcard/HS-268.pdf</string>
-	<string name="CloseOpen">CloseOpen</string>
+	<string name="_MNT_SDCARD_TEST_DOCUMENT1">/mnt/sdcard/HS-268.pdf</string>
+	<string name="_MNT_SDCARD_TEST_DOCUMENT2">/mnt/sdcard/HS-258.pdf</string>
+	<string name="_DATA_DATA_TEST_SAVED_DOCUMENT">/data/data/com.foxitsample.formfiled/savedDocument.pdf</string>
+	<string name="_DATA_DATA_TEST_FINALED_DOCUMENT">/data/data/com.foxitsample.formfiled/finaledDocument.pdf</string>
+	<string name="closeTest">CloseTest</string>
+	<string name="doc1">doc1</string>
+	<string name="doc2">doc2</string>
+	<string name="savedDoc">savedDoc</string>
+	<string name="finaled">finaled</string>
+	
+	
 </resources>
